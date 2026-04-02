@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Menu, X, Search, Globe, ChevronDown } from 'lucide-react';
 import { NAVIGATION, LANGUAGES } from '@/lib/constants';
 import { cn } from '@/utils/cn';
@@ -13,19 +14,20 @@ export default function Header() {
 
   return (
     <header className="bg-dark sticky top-0 z-50 w-full text-white">
-      {/* Top bar — amarelo */}
       <div className="bg-brand h-1 w-full" />
 
       <div className="container-custom">
         <div className="flex h-20 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
-            <div className="flex flex-col items-center">
-              <span className="bg-brand text-dark rounded px-3 py-1 text-lg font-black tracking-wider">
-                ORIGINAL
-              </span>
-              <span className="mt-0.5 text-xs font-medium tracking-[0.2em] text-white">FILTER</span>
-            </div>
+            <Image
+              src="/images/logo-originalfilter.png"
+              alt="Original Filter"
+              width={140}
+              height={56}
+              className="h-12 w-auto sm:h-14"
+              priority
+            />
           </Link>
 
           {/* Nav — Desktop */}
@@ -55,7 +57,6 @@ export default function Header() {
                   )}
                 </Link>
 
-                {/* Dropdown */}
                 {item.children && activeDropdown === item.label && (
                   <div className="border-dark-mid bg-dark-soft absolute top-full left-0 z-50 min-w-[240px] rounded-b-lg border py-2 shadow-2xl">
                     {item.children.map((child) => (
@@ -75,7 +76,6 @@ export default function Header() {
 
           {/* Actions — Desktop */}
           <div className="hidden items-center gap-3 lg:flex">
-            {/* Busca rápida */}
             <Link
               href="/produtos"
               className="hover:bg-dark-mid flex h-9 w-9 items-center justify-center rounded-full transition-colors"
@@ -84,7 +84,6 @@ export default function Header() {
               <Search className="h-5 w-5" />
             </Link>
 
-            {/* Idioma */}
             <div className="relative">
               <button
                 onClick={() => setLangOpen(!langOpen)}
@@ -110,7 +109,6 @@ export default function Header() {
               )}
             </div>
 
-            {/* CTA */}
             <Link
               href="/contato"
               className="bg-brand text-dark hover:bg-brand-hover rounded-lg px-5 py-2 text-sm font-bold transition-colors"

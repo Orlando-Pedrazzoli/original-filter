@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Phone, Mail, MapPin } from 'lucide-react';
 import { CONTACT, CERTIFICATIONS } from '@/lib/constants';
 
@@ -29,16 +30,21 @@ export default function Footer() {
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           {/* Logo & Descrição */}
           <div>
-            <div className="mb-6 flex flex-col items-start">
-              <span className="bg-brand text-dark rounded px-3 py-1 text-lg font-black tracking-wider">
-                ORIGINAL
-              </span>
-              <span className="mt-0.5 text-xs font-medium tracking-[0.2em] text-white">FILTER</span>
+            <div className="mb-6">
+              <Image
+                src="/images/logo-originalfilter.png"
+                alt="Original Filter"
+                width={120}
+                height={48}
+                className="h-10 w-auto"
+              />
             </div>
+
             <p className="mb-6 text-sm leading-relaxed text-gray-400">
               Especialistas em filtros automotivos, agrícolas e industriais. Qualidade superior com
               certificações internacionais.
             </p>
+
             <div className="flex flex-wrap gap-2">
               {CERTIFICATIONS.map((cert) => (
                 <span
@@ -56,6 +62,7 @@ export default function Footer() {
             <h3 className="text-brand mb-4 text-sm font-bold tracking-wider uppercase">
               A Empresa
             </h3>
+
             <ul className="space-y-3">
               {[
                 { label: 'Sobre Nós', href: '/sobre' },
@@ -79,6 +86,7 @@ export default function Footer() {
           {/* Links Produtos */}
           <div>
             <h3 className="text-brand mb-4 text-sm font-bold tracking-wider uppercase">Produtos</h3>
+
             <ul className="space-y-3">
               {[
                 { label: 'Catálogo Completo', href: '/produtos' },
@@ -106,6 +114,7 @@ export default function Footer() {
           {/* Contato */}
           <div>
             <h3 className="text-brand mb-4 text-sm font-bold tracking-wider uppercase">Contato</h3>
+
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <Phone className="text-brand mt-0.5 h-4 w-4 flex-shrink-0" />
@@ -114,6 +123,7 @@ export default function Footer() {
                   <p className="text-xs text-gray-500">SAC: {CONTACT.sac}</p>
                 </div>
               </li>
+
               <li className="flex items-center gap-3">
                 <Mail className="text-brand h-4 w-4 flex-shrink-0" />
                 <a
@@ -123,6 +133,7 @@ export default function Footer() {
                   {CONTACT.email}
                 </a>
               </li>
+
               <li className="flex items-center gap-3">
                 <MapPin className="text-brand h-4 w-4 flex-shrink-0" />
                 <span className="text-sm text-gray-400">{CONTACT.address}</span>
@@ -139,6 +150,7 @@ export default function Footer() {
               >
                 <FacebookIcon className="h-4 w-4" />
               </a>
+
               <a
                 href={CONTACT.instagram}
                 target="_blank"
@@ -153,9 +165,11 @@ export default function Footer() {
         </div>
       </div>
 
+      {/* Bottom */}
       <div className="border-t border-gray-800">
         <div className="container-custom flex flex-col items-center justify-between gap-2 py-6 text-xs text-gray-500 sm:flex-row">
           <p>&copy; {currentYear} Original Filter. Todos os direitos reservados.</p>
+
           <p>
             Desenvolvido por{' '}
             <a
