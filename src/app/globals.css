@@ -1,26 +1,98 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ══════════════════════════════════════════
+   Original Filter — Design Tokens
+   Tailwind v4: cores definidas via @theme
+   ══════════════════════════════════════════ */
+
+@theme {
+  /* Brand — Amarelo */
+  --color-brand: #ffd700;
+  --color-brand-light: #ffde00;
+  --color-brand-dark: #e6c200;
+  --color-brand-hover: #ffc400;
+
+  /* Brand — Preto/Escuro */
+  --color-dark: #000000;
+  --color-dark-soft: #1a1a1a;
+  --color-dark-mid: #2d2d2d;
+
+  /* Brand — Cinzas */
+  --color-surface: #f5f5f5;
+  --color-surface-alt: #ebebeb;
+  --color-muted: #9ca3af;
+  --color-muted-dark: #4b5563;
+
+  /* Feedback */
+  --color-success: #16a34a;
+  --color-warning: #f59e0b;
+  --color-danger: #dc2626;
+  --color-info: #2563eb;
+
+  /* Fontes */
+  --font-heading: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ── Reset & Base ── */
+@layer base {
+  * {
+    border-color: theme(--color-surface-alt);
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    font-family: var(--font-body);
+    color: var(--color-dark);
+    background-color: white;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Scrollbar discreta */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-surface);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-muted);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-muted-dark);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ── Utilitários Customizados ── */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .container-custom {
+    width: 100%;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .container-custom {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container-custom {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
 }
