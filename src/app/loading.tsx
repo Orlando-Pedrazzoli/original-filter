@@ -1,10 +1,77 @@
-export default function Loading() {
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
+export const metadata: Metadata = {
+  title: {
+    default: 'Original Filter | Especialista em Filtros Automotivos',
+    template: '%s | Original Filter',
+  },
+  description:
+    'Líder no mercado de autopeças, especializada em filtros automotivos, agrícolas, industriais e fora-de-estrada. Filtros de ar, óleo, combustível, hidráulicos e mais.',
+  keywords: [
+    'filtros automotivos',
+    'filtro de ar',
+    'filtro de óleo',
+    'filtro de combustível',
+    'filtro hidráulico',
+    'filtro secador de ar',
+    'filtro de arrefecimento',
+    'Original Filter',
+    'filtros para caminhão',
+    'filtros agrícolas',
+    'filtros industriais',
+    'autopeças',
+    'Scania',
+    'Volvo',
+    'Mercedes-Benz',
+    'Volkswagen',
+    'DAF',
+  ],
+  authors: [{ name: 'Original Filter' }],
+  creator: 'Pedrazzoli Digital',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://originalfilter.com'),
+  openGraph: {
+    type: 'website',
+    locale: 'pt_BR',
+    siteName: 'Original Filter',
+    title: 'Original Filter | Especialista em Filtros Automotivos',
+    description:
+      'Filtros automotivos, agrícolas e industriais de alta qualidade. Catálogo completo com mais de 481 produtos.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  icons: {
+    icon: '/images/favicon-32x32.png',
+    shortcut: '/images/favicon.ico',
+    apple: '/images/apple-touch-icon.png',
+  },
+  manifest: '/images/site.webmanifest',
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <div className="bg-dark flex min-h-screen items-center justify-center">
-      <div className="flex flex-col items-center gap-4">
-        <div className="border-brand h-10 w-10 animate-spin rounded-full border-4 border-t-transparent" />
-        <span className="text-sm text-gray-400">Carregando...</span>
-      </div>
-    </div>
+    <html lang="pt-BR" className={inter.variable}>
+      <body>{children}</body>
+    </html>
   );
 }
