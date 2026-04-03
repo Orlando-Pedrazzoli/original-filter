@@ -1,63 +1,88 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Search, ArrowRight, Shield, Award, Truck } from 'lucide-react';
+import {
+  Wind,
+  Droplets,
+  Fuel,
+  Gauge,
+  Snowflake,
+  Thermometer,
+  ShieldCheck,
+  Truck,
+  Award,
+  Headphones,
+  ArrowRight,
+} from 'lucide-react';
+import HeroSphere from '@/components/home/hero-sphere';
 import { MAIN_BRANDS, FILTER_CATEGORIES, CERTIFICATIONS } from '@/lib/constants';
+
+export const metadata: Metadata = {
+  title: 'Original Filter | Especialista em Filtros Automotivos — Filtrando o futuro.',
+  description:
+    'Fabricante brasileira de filtros automotivos, agrícolas e industriais. Catálogo com 770+ produtos. Certificações IATF 16949, QS 9000, ISO 9001. Filtrando o futuro.',
+};
+
+const CATEGORY_ICONS: Record<string, typeof Wind> = {
+  wind: Wind,
+  droplets: Droplets,
+  fuel: Fuel,
+  gauge: Gauge,
+  snowflake: Snowflake,
+  fan: Thermometer,
+};
+
+const DIFERENCIAIS = [
+  {
+    icon: ShieldCheck,
+    title: 'Qualidade Certificada',
+    text: 'IATF 16949, QS 9000 e ISO 9001 — padrões internacionais de excelência em cada filtro.',
+  },
+  {
+    icon: Truck,
+    title: 'Distribuição Nacional',
+    text: 'Estoque robusto em Cotia/SP com distribuição via Del Rey para todo o Brasil.',
+  },
+  {
+    icon: Award,
+    title: '770+ Produtos',
+    text: 'Linha completa para transporte, agrícola, máquinas e equipamentos. Todas as montadoras.',
+  },
+  {
+    icon: Headphones,
+    title: 'Suporte Técnico',
+    text: 'Equipe especializada disponível pelo SAC 0800 778 2000 para dúvidas e assistência.',
+  },
+];
+
+const TOP_CATEGORIES = FILTER_CATEGORIES.filter((c) =>
+  [
+    'filtro-de-ar',
+    'filtro-de-oleo',
+    'filtro-de-combustivel',
+    'filtro-hidraulico',
+    'filtro-secador-de-ar',
+    'filtro-de-arrefecimento',
+  ].includes(c.slug),
+);
 
 export default function HomePage() {
   return (
     <>
-      {/* ══════ HERO ══════ */}
-      <section className="bg-dark relative text-white">
-        <div className="container-custom flex flex-col items-center py-20 text-center lg:py-32">
-          <h1 className="mb-6 max-w-4xl text-4xl leading-tight font-black lg:text-6xl">
-            Encontre o filtro <span className="text-brand">perfeito</span> para o seu veículo
-          </h1>
-          <p className="mb-10 max-w-2xl text-lg text-gray-400">
-            Mais de 481 filtros automotivos, agrícolas e industriais. Qualidade certificada IATF
-            16949, QS 9000 e ISO 9001.
-          </p>
+      {/* ── Hero with Geometric Sphere ── */}
+      <HeroSphere />
 
-          {/* Barra de busca */}
-          <div className="flex w-full max-w-xl overflow-hidden rounded-xl bg-white shadow-2xl">
-            <div className="flex flex-1 items-center gap-3 px-5">
-              <Search className="h-5 w-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Busque por código, conversão ou veículo..."
-                className="text-dark w-full py-4 text-sm outline-none placeholder:text-gray-400"
-              />
-            </div>
-            <Link
-              href="/produtos"
-              className="bg-brand text-dark hover:bg-brand-hover flex items-center px-6 font-bold transition-colors"
-            >
-              Buscar
-            </Link>
-          </div>
-
-          {/* Certificações */}
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            {CERTIFICATIONS.map((cert) => (
-              <span
-                key={cert}
-                className="rounded-full border border-gray-700 px-4 py-1.5 text-xs text-gray-400"
-              >
-                {cert}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════ MONTADORAS ══════ */}
-      <section className="bg-white py-16">
+      {/* ── Montadoras ── */}
+      <section className="border-surface-alt border-b bg-white py-12">
         <div className="container-custom">
-          <h2 className="text-dark mb-10 text-center text-2xl font-bold">Montadoras atendidas</h2>
-          <div className="grid grid-cols-3 gap-4 sm:grid-cols-5 lg:grid-cols-9">
+          <p className="text-muted mb-8 text-center text-xs font-semibold tracking-[0.2em] uppercase">
+            Filtros para as principais montadoras
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
             {MAIN_BRANDS.map((brand) => (
               <Link
                 key={brand.slug}
                 href={`/produtos/marca/${brand.slug}`}
-                className="border-surface-alt bg-surface text-dark hover:border-brand flex h-20 items-center justify-center rounded-xl border text-center text-sm font-semibold transition-all hover:shadow-md"
+                className="text-muted-dark hover:text-brand-dark text-sm font-bold tracking-wider uppercase transition-colors"
               >
                 {brand.name}
               </Link>
@@ -66,117 +91,112 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══════ CATEGORIAS DE FILTRO ══════ */}
-      <section className="bg-surface py-16">
+      {/* ── Categorias de Filtro ── */}
+      <section className="py-16 md:py-24">
         <div className="container-custom">
-          <div className="mb-10 flex items-end justify-between">
-            <div>
-              <h2 className="text-dark text-2xl font-bold">Nossos produtos</h2>
-              <p className="text-muted-dark mt-2">Linha completa de filtros de reposição</p>
-            </div>
-            <Link
-              href="/produtos"
-              className="text-dark hover:text-brand hidden items-center gap-2 text-sm font-semibold transition-colors sm:flex"
-            >
-              Ver catálogo completo
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+          <div className="text-center">
+            <span className="text-brand-dark text-sm font-semibold tracking-widest uppercase">
+              Nossos Produtos
+            </span>
+            <h2 className="font-heading text-dark mt-2 text-2xl font-bold md:text-3xl">
+              Encontre o filtro ideal
+            </h2>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {FILTER_CATEGORIES.slice(0, 6).map((cat) => (
-              <Link
-                key={cat.slug}
-                href={`/produtos/categoria/${cat.slug}`}
-                className="group border-surface-alt hover:border-brand flex items-center gap-4 rounded-xl border bg-white p-5 transition-all hover:shadow-md"
-              >
-                <div className="bg-brand/10 text-brand group-hover:bg-brand group-hover:text-dark flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg transition-colors">
-                  <Search className="h-5 w-5" />
-                </div>
-                <div>
-                  <h3 className="text-dark font-semibold">{cat.name}</h3>
-                  <p className="text-muted-dark text-sm">Ver produtos</p>
-                </div>
-              </Link>
-            ))}
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {TOP_CATEGORIES.map((cat) => {
+              const IconComponent = CATEGORY_ICONS[cat.icon] || Wind;
+              return (
+                <Link
+                  key={cat.slug}
+                  href={`/produtos/categoria/${cat.slug}`}
+                  className="group border-surface-alt hover:border-brand/30 hover:shadow-brand/5 flex items-center gap-4 rounded-2xl border bg-white p-5 transition-all hover:shadow-lg"
+                >
+                  <div className="bg-brand/10 text-brand group-hover:bg-brand group-hover:text-dark flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-colors">
+                    <IconComponent className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-heading text-dark text-base font-semibold">{cat.name}</h3>
+                  </div>
+                  <ArrowRight className="text-muted group-hover:text-brand h-4 w-4 transition-all group-hover:translate-x-1" />
+                </Link>
+              );
+            })}
           </div>
 
-          <div className="mt-6 text-center sm:hidden">
+          <div className="mt-8 text-center">
             <Link
               href="/produtos"
-              className="text-dark inline-flex items-center gap-2 text-sm font-semibold"
+              className="text-dark hover:text-brand-dark inline-flex items-center gap-2 text-sm font-semibold transition-colors"
             >
-              Ver catálogo completo
+              Ver todas as categorias
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ══════ DIFERENCIAIS ══════ */}
-      <section className="bg-white py-16">
+      {/* ── Diferenciais ── */}
+      <section className="bg-dark py-16 md:py-24">
         <div className="container-custom">
-          <h2 className="text-dark mb-10 text-center text-2xl font-bold">
-            Por que escolher a Original Filter?
-          </h2>
-          <div className="grid gap-8 md:grid-cols-3">
-            {[
-              {
-                icon: Shield,
-                title: 'Qualidade Certificada',
-                description:
-                  'Certificações IATF 16949, QS 9000 e ISO 9001. Cada filtro passa por rigorosos testes em laboratórios avançados.',
-              },
-              {
-                icon: Award,
-                title: 'Linha Completa',
-                description:
-                  'Mais de 481 produtos para transporte, agrícola, industrial e fora-de-estrada. Atendemos as principais montadoras mundiais.',
-              },
-              {
-                icon: Truck,
-                title: 'Distribuição Eficiente',
-                description:
-                  'Sede em Cotia/SP, junto às principais rodovias. Estoque robusto para atendimento ágil em todo o Brasil.',
-              },
-            ].map((item) => (
+          <div className="text-center">
+            <span className="text-brand text-sm font-semibold tracking-widest uppercase">
+              Por que escolher a Original Filter
+            </span>
+            <h2 className="font-heading mt-2 text-2xl font-bold text-white md:text-3xl">
+              Excelência em cada detalhe
+            </h2>
+          </div>
+
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {DIFERENCIAIS.map((item) => (
               <div
                 key={item.title}
-                className="border-surface-alt rounded-xl border p-8 text-center"
+                className="hover:border-brand/20 rounded-2xl border border-white/10 bg-white/5 p-6 transition-colors"
               >
-                <div className="bg-brand/10 mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full">
-                  <item.icon className="text-brand h-7 w-7" />
+                <div className="bg-brand text-dark flex h-11 w-11 items-center justify-center rounded-lg">
+                  <item.icon className="h-5 w-5" />
                 </div>
-                <h3 className="text-dark mb-3 text-lg font-bold">{item.title}</h3>
-                <p className="text-muted-dark text-sm leading-relaxed">{item.description}</p>
+                <h3 className="font-heading mt-4 text-lg font-semibold text-white">{item.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-gray-400">{item.text}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ══════ CTA ══════ */}
-      <section className="bg-dark py-16 text-white">
-        <div className="container-custom text-center">
-          <h2 className="mb-4 text-3xl font-bold">
-            Precisa de ajuda para encontrar o filtro certo?
+      {/* ── CTA Final ── */}
+      <section className="bg-brand relative overflow-hidden py-16 md:py-20">
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage:
+              'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.3) 1px, transparent 0)',
+            backgroundSize: '24px 24px',
+          }}
+        />
+        <div className="container-custom relative z-10 text-center">
+          <h2 className="font-heading text-dark text-2xl font-bold md:text-4xl">
+            Precisa de filtros para a sua frota?
           </h2>
-          <p className="mb-8 text-gray-400">
-            Nossa equipe de especialistas está pronta para ajudar.
+          <p className="text-dark/70 mx-auto mt-4 max-w-xl">
+            Solicite um orçamento personalizado. Nossa equipe técnica está pronta para encontrar a
+            solução ideal para o seu negócio.
           </p>
-          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
               href="/contato"
-              className="bg-brand text-dark hover:bg-brand-hover rounded-xl px-8 py-3.5 font-bold transition-colors"
+              className="bg-dark hover:bg-dark-soft inline-flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-bold text-white transition-all hover:shadow-lg"
             >
               Solicitar Orçamento
+              <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link
-              href="/produtos"
-              className="hover:border-brand hover:text-brand rounded-xl border border-gray-700 px-8 py-3.5 font-bold transition-colors"
+            <a
+              href="tel:08007782000"
+              className="border-dark/20 text-dark hover:border-dark hover:bg-dark/5 inline-flex items-center gap-2 rounded-xl border-2 px-8 py-3.5 text-sm font-bold transition-colors"
             >
-              Ver Catálogo
-            </Link>
+              SAC 0800 778 2000
+            </a>
           </div>
         </div>
       </section>

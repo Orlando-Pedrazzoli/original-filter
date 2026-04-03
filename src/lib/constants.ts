@@ -4,8 +4,10 @@
 
 import type { NavItem } from '@/types';
 
-// ── Cores da Marca ──
+// ── Marca ──
 export const BRAND = {
+  name: 'Original Filter',
+  slogan: 'Filtrando o futuro.',
   yellow: '#FFD700',
   yellowLight: '#FFDE00',
   black: '#000000',
