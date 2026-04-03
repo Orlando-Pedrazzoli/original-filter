@@ -14,7 +14,8 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import HeroSphere from '@/components/home/hero-sphere';
-import { MAIN_BRANDS, FILTER_CATEGORIES, CERTIFICATIONS } from '@/lib/constants';
+import BrandsCarousel from '@/components/home/brands-carousel';
+import { FILTER_CATEGORIES, CERTIFICATIONS } from '@/lib/constants';
 
 export const metadata: Metadata = {
   title: 'Original Filter | Especialista em Filtros Automotivos — Filtrando o futuro.',
@@ -55,14 +56,7 @@ const DIFERENCIAIS = [
 ];
 
 const TOP_CATEGORIES = FILTER_CATEGORIES.filter((c) =>
-  [
-    'filtro-de-ar',
-    'filtro-de-oleo',
-    'filtro-de-combustivel',
-    'filtro-hidraulico',
-    'filtro-secador-de-ar',
-    'filtro-de-arrefecimento',
-  ].includes(c.slug),
+  ['filtro-de-ar', 'filtro-de-oleo', 'filtro-de-combustivel', 'filtro-hidraulico', 'filtro-secador-de-ar', 'filtro-de-arrefecimento'].includes(c.slug)
 );
 
 export default function HomePage() {
@@ -71,34 +65,17 @@ export default function HomePage() {
       {/* ── Hero with Geometric Sphere ── */}
       <HeroSphere />
 
-      {/* ── Montadoras ── */}
-      <section className="border-surface-alt border-b bg-white py-12">
-        <div className="container-custom">
-          <p className="text-muted mb-8 text-center text-xs font-semibold tracking-[0.2em] uppercase">
-            Filtros para as principais montadoras
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
-            {MAIN_BRANDS.map((brand) => (
-              <Link
-                key={brand.slug}
-                href={`/produtos/marca/${brand.slug}`}
-                className="text-muted-dark hover:text-brand-dark text-sm font-bold tracking-wider uppercase transition-colors"
-              >
-                {brand.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ── Brands Infinite Carousel ── */}
+      <BrandsCarousel />
 
       {/* ── Categorias de Filtro ── */}
       <section className="py-16 md:py-24">
         <div className="container-custom">
           <div className="text-center">
-            <span className="text-brand-dark text-sm font-semibold tracking-widest uppercase">
+            <span className="text-sm font-semibold uppercase tracking-widest text-brand-dark">
               Nossos Produtos
             </span>
-            <h2 className="font-heading text-dark mt-2 text-2xl font-bold md:text-3xl">
+            <h2 className="mt-2 font-heading text-2xl font-bold text-dark md:text-3xl">
               Encontre o filtro ideal
             </h2>
           </div>
@@ -110,15 +87,17 @@ export default function HomePage() {
                 <Link
                   key={cat.slug}
                   href={`/produtos/categoria/${cat.slug}`}
-                  className="group border-surface-alt hover:border-brand/30 hover:shadow-brand/5 flex items-center gap-4 rounded-2xl border bg-white p-5 transition-all hover:shadow-lg"
+                  className="group flex items-center gap-4 rounded-2xl border border-surface-alt bg-white p-5 transition-all hover:border-brand/30 hover:shadow-lg hover:shadow-brand/5"
                 >
-                  <div className="bg-brand/10 text-brand group-hover:bg-brand group-hover:text-dark flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-colors">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand/10 text-brand transition-colors group-hover:bg-brand group-hover:text-dark">
                     <IconComponent className="h-5 w-5" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-heading text-dark text-base font-semibold">{cat.name}</h3>
+                    <h3 className="font-heading text-base font-semibold text-dark">
+                      {cat.name}
+                    </h3>
                   </div>
-                  <ArrowRight className="text-muted group-hover:text-brand h-4 w-4 transition-all group-hover:translate-x-1" />
+                  <ArrowRight className="h-4 w-4 text-muted transition-all group-hover:translate-x-1 group-hover:text-brand" />
                 </Link>
               );
             })}
@@ -127,7 +106,7 @@ export default function HomePage() {
           <div className="mt-8 text-center">
             <Link
               href="/produtos"
-              className="text-dark hover:text-brand-dark inline-flex items-center gap-2 text-sm font-semibold transition-colors"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-dark transition-colors hover:text-brand-dark"
             >
               Ver todas as categorias
               <ArrowRight className="h-4 w-4" />
@@ -140,10 +119,10 @@ export default function HomePage() {
       <section className="bg-dark py-16 md:py-24">
         <div className="container-custom">
           <div className="text-center">
-            <span className="text-brand text-sm font-semibold tracking-widest uppercase">
+            <span className="text-sm font-semibold uppercase tracking-widest text-brand">
               Por que escolher a Original Filter
             </span>
-            <h2 className="font-heading mt-2 text-2xl font-bold text-white md:text-3xl">
+            <h2 className="mt-2 font-heading text-2xl font-bold text-white md:text-3xl">
               Excelência em cada detalhe
             </h2>
           </div>
@@ -152,13 +131,17 @@ export default function HomePage() {
             {DIFERENCIAIS.map((item) => (
               <div
                 key={item.title}
-                className="hover:border-brand/20 rounded-2xl border border-white/10 bg-white/5 p-6 transition-colors"
+                className="rounded-2xl border border-white/10 bg-white/5 p-6 transition-colors hover:border-brand/20"
               >
-                <div className="bg-brand text-dark flex h-11 w-11 items-center justify-center rounded-lg">
+                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-brand text-dark">
                   <item.icon className="h-5 w-5" />
                 </div>
-                <h3 className="font-heading mt-4 text-lg font-semibold text-white">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-gray-400">{item.text}</p>
+                <h3 className="mt-4 font-heading text-lg font-semibold text-white">
+                  {item.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-gray-400">
+                  {item.text}
+                </p>
               </div>
             ))}
           </div>
@@ -166,7 +149,7 @@ export default function HomePage() {
       </section>
 
       {/* ── CTA Final ── */}
-      <section className="bg-brand relative overflow-hidden py-16 md:py-20">
+      <section className="relative overflow-hidden bg-brand py-16 md:py-20">
         <div
           className="absolute inset-0 opacity-10"
           style={{
@@ -176,24 +159,24 @@ export default function HomePage() {
           }}
         />
         <div className="container-custom relative z-10 text-center">
-          <h2 className="font-heading text-dark text-2xl font-bold md:text-4xl">
+          <h2 className="font-heading text-2xl font-bold text-dark md:text-4xl">
             Precisa de filtros para a sua frota?
           </h2>
-          <p className="text-dark/70 mx-auto mt-4 max-w-xl">
-            Solicite um orçamento personalizado. Nossa equipe técnica está pronta para encontrar a
-            solução ideal para o seu negócio.
+          <p className="mx-auto mt-4 max-w-xl text-dark/70">
+            Solicite um orçamento personalizado. Nossa equipe técnica está pronta para
+            encontrar a solução ideal para o seu negócio.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
               href="/contato"
-              className="bg-dark hover:bg-dark-soft inline-flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-bold text-white transition-all hover:shadow-lg"
+              className="inline-flex items-center gap-2 rounded-xl bg-dark px-8 py-3.5 text-sm font-bold text-white transition-all hover:bg-dark-soft hover:shadow-lg"
             >
               Solicitar Orçamento
               <ArrowRight className="h-4 w-4" />
             </Link>
             <a
               href="tel:08007782000"
-              className="border-dark/20 text-dark hover:border-dark hover:bg-dark/5 inline-flex items-center gap-2 rounded-xl border-2 px-8 py-3.5 text-sm font-bold transition-colors"
+              className="inline-flex items-center gap-2 rounded-xl border-2 border-dark/20 px-8 py-3.5 text-sm font-bold text-dark transition-colors hover:border-dark hover:bg-dark/5"
             >
               SAC 0800 778 2000
             </a>
