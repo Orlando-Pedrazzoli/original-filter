@@ -6,33 +6,52 @@ import Image from 'next/image';
 import { Search, ArrowRight, ChevronDown } from 'lucide-react';
 import { BRAND, CERTIFICATIONS } from '@/lib/constants';
 
-/* ══════════════════════════════════════════
-   Original Filter — Geometric Sphere Hero
-   Adapted from shadcn geometric-sphere
-   Brand: Yellow (#FFD700) / Black / White
-   ══════════════════════════════════════════ */
-
 const CONFIG = {
-  // Brand Colors (RGB)
-  primaryColor: '255, 215, 0', // Brand yellow
-  secondaryColor: '230, 194, 0', // Brand yellow dark
-  accentColor: '255, 255, 255', // White accents
-
-  // Animation
-  sphereRotationDuration: '200s',
-  gridPanDuration: '180s',
-  coreGlowDuration: '25s',
-
-  // Intensity
-  wireframeOpacity: 0.6,
-  wireframeShadowIntensity: 50,
-  coreBlur: 180,
-  parallaxDepth: 30,
+  primaryColor: '255, 215, 0',
+  secondaryColor: '230, 194, 0',
+  wireframeOpacity: 0.4,
+  wireframeShadowIntensity: 30,
+  coreBlur: 150,
+  parallaxDepth: 20,
   lerpFactor: 0.06,
-  sphereDensity: 14,
+  sphereDensity: 12,
 };
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+const SPHERE_CSS = `
+  .hero-sphere-line {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(${CONFIG.primaryColor}, ${CONFIG.wireframeOpacity});
+    box-shadow: 0 0 ${CONFIG.wireframeShadowIntensity}px rgba(${CONFIG.primaryColor}, 0.1),
+                inset 0 0 ${CONFIG.wireframeShadowIntensity}px rgba(${CONFIG.primaryColor}, 0.03);
+  }
+  @keyframes sphereRotate {
+    from { transform: rotateY(0deg) rotateX(0deg); }
+    to { transform: rotateY(360deg) rotateX(180deg); }
+  }
+  .hero-sphere-rotation {
+    animation: sphereRotate 240s linear infinite;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+  }
+  @keyframes corePulse {
+    0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); }
+  }
+  .hero-core-light {
+    animation: corePulse 25s ease-in-out infinite;
+  }
+  @keyframes gridPan {
+    from { background-position: 0 0; }
+    to { background-position: 40px 40px; }
+  }
+  .hero-panning-grid {
+    animation: gridPan 180s linear infinite;
+  }
+`;
 
 export default function HeroSphere() {
   const [targetMousePos, setTargetMousePos] = useState({ x: 0, y: 0 });
@@ -99,63 +118,8 @@ export default function HeroSphere() {
   });
 
   return (
-    <section className="bg-dark relative flex h-screen w-full items-center justify-center overflow-hidden">
-      {/* ── CSS for sphere animations ── */}
-      <style jsx>{`
-        .hero-sphere-line {
-          position: absolute;
-          inset: 0;
-          border-radius: 50%;
-          border: 1px solid rgba(${CONFIG.primaryColor}, ${CONFIG.wireframeOpacity});
-          box-shadow:
-            0 0 ${CONFIG.wireframeShadowIntensity}px rgba(${CONFIG.primaryColor}, 0.15),
-            inset 0 0 ${CONFIG.wireframeShadowIntensity}px rgba(${CONFIG.primaryColor}, 0.05);
-        }
-
-        @keyframes sphereRotate {
-          from {
-            transform: rotateY(0deg) rotateX(0deg);
-          }
-          to {
-            transform: rotateY(360deg) rotateX(180deg);
-          }
-        }
-
-        .hero-sphere-rotation {
-          animation: sphereRotate ${CONFIG.sphereRotationDuration} linear infinite;
-          transform-style: preserve-3d;
-          perspective: 1000px;
-        }
-
-        @keyframes corePulse {
-          0%,
-          100% {
-            opacity: 0.5;
-            transform: translate(-50%, -50%) scale(1);
-          }
-          50% {
-            opacity: 0.8;
-            transform: translate(-50%, -50%) scale(1.15);
-          }
-        }
-
-        .hero-core-light {
-          animation: corePulse ${CONFIG.coreGlowDuration} ease-in-out infinite;
-        }
-
-        @keyframes gridPan {
-          from {
-            background-position: 0 0;
-          }
-          to {
-            background-position: 40px 40px;
-          }
-        }
-
-        .hero-panning-grid {
-          animation: gridPan ${CONFIG.gridPanDuration} linear infinite;
-        }
-      `}</style>
+    <section className="bg-dark relative flex min-h-screen w-full items-center justify-center overflow-hidden">
+      <style dangerouslySetInnerHTML={{ __html: SPHERE_CSS }} />
 
       {/* Layer 0: Panning Grid */}
       <div
@@ -173,8 +137,8 @@ export default function HeroSphere() {
         className="absolute inset-0"
         style={{
           transform: `translate3d(${smoothX * (depth / 2)}px, ${smoothY * (depth / 2)}px, 0)`,
-          backgroundImage: `radial-gradient(circle at 50% 50%, rgba(${CONFIG.primaryColor}, 0.08) 0%, transparent 50%)`,
-          filter: 'blur(150px)',
+          backgroundImage: `radial-gradient(circle at 50% 45%, rgba(${CONFIG.primaryColor}, 0.06) 0%, transparent 50%)`,
+          filter: 'blur(120px)',
           mixBlendMode: 'screen',
         }}
       />
@@ -184,26 +148,26 @@ export default function HeroSphere() {
         className="absolute inset-0"
         style={{
           transform: `translate3d(${smoothX * depth}px, ${smoothY * depth}px, 0)`,
-          backgroundImage: `radial-gradient(at 50% 50%, rgba(${CONFIG.primaryColor}, 0.05) 0%, #000000 90%)`,
+          backgroundImage: `radial-gradient(at 50% 45%, rgba(${CONFIG.primaryColor}, 0.04) 0%, #000000 85%)`,
         }}
       >
         <div
-          className="hero-core-light pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+          className="hero-core-light pointer-events-none absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{
-            width: '400px',
-            height: '400px',
-            backgroundImage: `radial-gradient(circle, rgba(${CONFIG.primaryColor}, 0.3) 0%, transparent 70%)`,
+            width: '350px',
+            height: '350px',
+            backgroundImage: `radial-gradient(circle, rgba(${CONFIG.primaryColor}, 0.2) 0%, transparent 70%)`,
             filter: `blur(${CONFIG.coreBlur}px)`,
           }}
         />
       </div>
 
-      {/* Layer 3: Wireframe Sphere */}
-      <div className="pointer-events-none absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
+      {/* Layer 3: Wireframe Sphere — smaller, centered, subtle */}
+      <div className="pointer-events-none absolute top-[45%] left-1/2 z-[5] -translate-x-1/2 -translate-y-1/2 opacity-60">
         <div
-          className="hero-sphere-rotation h-[600px] w-[600px] md:h-[700px] md:w-[700px]"
+          className="hero-sphere-rotation h-[380px] w-[380px] sm:h-[440px] sm:w-[440px] md:h-[500px] md:w-[500px]"
           style={{
-            transform: `rotateX(${smoothY * 5}deg) rotateY(${-smoothX * 5}deg)`,
+            transform: `rotateX(${smoothY * 4}deg) rotateY(${-smoothX * 4}deg)`,
             transformOrigin: 'center center',
           }}
         >
@@ -216,10 +180,10 @@ export default function HeroSphere() {
         className="absolute inset-0"
         style={{
           transform: `translate3d(${smoothX * depth}px, ${smoothY * depth}px, 0)`,
-          backgroundImage: `radial-gradient(circle at 50% 50%, rgba(${CONFIG.primaryColor}, 0.2) 0%, transparent 50%)`,
+          backgroundImage: `radial-gradient(circle at 50% 45%, rgba(${CONFIG.primaryColor}, 0.12) 0%, transparent 45%)`,
           mixBlendMode: 'screen',
-          filter: 'blur(100px)',
-          opacity: 0.8,
+          filter: 'blur(80px)',
+          opacity: 0.7,
         }}
       />
 
@@ -233,22 +197,23 @@ export default function HeroSphere() {
         }}
       />
 
-      {/* Layer 6: Hero Content */}
-      <div className="relative z-20 mx-auto max-w-4xl px-6 text-center">
+      {/* Layer 6: Hero Content — above sphere */}
+      <div className="relative z-20 mx-auto max-w-3xl px-6 pt-16 text-center">
         {/* Logo */}
-        <div className="mb-8 flex justify-center">
+        <div className="mb-6 flex justify-center">
           <Image
             src="/images/logo-originalfilter.png"
             alt="Original Filter"
-            width={180}
-            height={72}
-            className="h-16 w-auto md:h-20"
+            width={160}
+            height={64}
+            className="h-12 sm:h-14 md:h-16"
+            style={{ width: 'auto' }}
             priority
           />
         </div>
 
         {/* Slogan */}
-        <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
+        <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl">
           <span className="block">{BRAND.slogan.split(' ')[0]}</span>
           <span className="from-brand via-brand-light to-brand block bg-gradient-to-r bg-clip-text text-transparent">
             {BRAND.slogan.split(' ').slice(1).join(' ')}
@@ -256,17 +221,17 @@ export default function HeroSphere() {
         </h1>
 
         {/* Subtitle */}
-        <p className="mx-auto mt-6 max-w-2xl text-base text-gray-400 sm:text-lg md:text-xl">
+        <p className="mx-auto mt-5 max-w-xl text-sm text-gray-400 sm:text-base md:text-lg">
           Especialistas em filtros automotivos, agrícolas e industriais. Qualidade certificada
           internacionalmente para proteger o que move o seu negócio.
         </p>
 
         {/* Certifications */}
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
           {CERTIFICATIONS.map((cert) => (
             <span
               key={cert}
-              className="border-brand/30 bg-brand/10 text-brand rounded-full border px-3 py-1 text-xs font-semibold tracking-wider"
+              className="border-brand/25 bg-brand/5 text-brand/80 rounded-full border px-3 py-1 text-[10px] font-semibold tracking-wider uppercase"
             >
               {cert}
             </span>
@@ -274,17 +239,17 @@ export default function HeroSphere() {
         </div>
 
         {/* Search Bar */}
-        <div className="mx-auto mt-10 max-w-xl">
+        <div className="mx-auto mt-8 max-w-lg">
           <div className="group relative">
-            <Search className="group-focus-within:text-brand absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-gray-500 transition-colors" />
+            <Search className="group-focus-within:text-brand absolute top-1/2 left-4 h-4.5 w-4.5 -translate-y-1/2 text-gray-500 transition-colors" />
             <input
               type="text"
               placeholder="Buscar por código, montadora ou tipo de filtro..."
-              className="focus:border-brand/50 focus:ring-brand/20 h-14 w-full rounded-2xl border border-white/10 bg-white/5 pr-32 pl-12 text-sm text-white backdrop-blur-sm transition-all outline-none placeholder:text-gray-500 focus:bg-white/10 focus:ring-2"
+              className="focus:border-brand/50 focus:ring-brand/20 h-12 w-full rounded-xl border border-white/10 bg-white/5 pr-28 pl-11 text-sm text-white backdrop-blur-sm transition-all outline-none placeholder:text-gray-500 focus:bg-white/10 focus:ring-2"
             />
             <Link
               href="/produtos"
-              className="bg-brand text-dark hover:bg-brand-hover hover:shadow-brand/25 absolute top-1/2 right-2 -translate-y-1/2 rounded-xl px-5 py-2.5 text-sm font-bold transition-all hover:shadow-lg"
+              className="bg-brand text-dark hover:bg-brand-hover hover:shadow-brand/25 absolute top-1/2 right-1.5 -translate-y-1/2 rounded-lg px-4 py-2 text-xs font-bold transition-all hover:shadow-lg"
             >
               Buscar
             </Link>
@@ -292,17 +257,17 @@ export default function HeroSphere() {
         </div>
 
         {/* CTAs */}
-        <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+        <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
             href="/produtos"
-            className="group bg-brand text-dark hover:bg-brand-hover hover:shadow-brand/25 inline-flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-bold transition-all hover:shadow-lg"
+            className="group bg-brand text-dark hover:bg-brand-hover hover:shadow-brand/25 inline-flex items-center gap-2 rounded-xl px-7 py-3 text-sm font-bold transition-all hover:shadow-lg"
           >
             Ver Catálogo Completo
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
           <Link
             href="/contato"
-            className="hover:border-brand/40 inline-flex items-center gap-2 rounded-xl border border-white/20 px-8 py-3.5 text-sm font-medium text-white transition-all hover:bg-white/5"
+            className="hover:border-brand/30 inline-flex items-center gap-2 rounded-xl border border-white/15 px-7 py-3 text-sm font-medium text-white transition-all hover:bg-white/5"
           >
             Solicitar Orçamento
           </Link>
@@ -313,13 +278,13 @@ export default function HeroSphere() {
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          background: 'radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%)',
+          background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.7) 100%)',
         }}
       />
 
       {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 z-20 -translate-x-1/2 animate-bounce">
-        <ChevronDown className="text-brand/60 h-6 w-6" />
+      <div className="absolute bottom-6 left-1/2 z-20 -translate-x-1/2 animate-bounce">
+        <ChevronDown className="text-brand/50 h-5 w-5" />
       </div>
     </section>
   );
