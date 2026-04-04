@@ -11,14 +11,16 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Original Filter | Especialista em Filtros Automotivos',
+    default: 'Original Filter | Qualidade Superior em Filtros Automotivos e Sensores',
     template: '%s | Original Filter',
   },
   description:
-    'Líder no mercado de autopeças, especializada em filtros automotivos, agrícolas, industriais e fora-de-estrada. Filtros de ar, óleo, combustível, hidráulicos e mais.',
+    'Qualidade superior em filtros automotivos, agrícolas, industriais, fora-de-estrada e sensores. Filtros de ar, óleo, combustível, hidráulicos e mais.',
   keywords: [
     'filtros automotivos',
     'filtro de ar',
+    'sensores',
+    'sensores automotivos',
     'filtro de óleo',
     'filtro de combustível',
     'filtro hidráulico',
@@ -42,9 +44,9 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'pt_BR',
     siteName: 'Original Filter',
-    title: 'Original Filter | Especialista em Filtros Automotivos',
+    title: 'Original Filter | Qualidade Superior em Filtros Automotivos e Sensores',
     description:
-      'Filtros automotivos, agrícolas e industriais de alta qualidade. Catálogo completo com mais de 481 produtos.',
+      'Qualidade superior em filtros automotivos, agrícolas, industriais e sensores. Catálogo completo com mais de 770 produtos.',
   },
   robots: {
     index: true,
