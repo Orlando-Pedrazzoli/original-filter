@@ -1,3 +1,1 @@
-export default function ProductLines() {
-  return null;
-}
+export default function ProductLines() { return null; }

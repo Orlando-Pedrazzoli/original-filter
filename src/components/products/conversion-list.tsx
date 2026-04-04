@@ -1,3 +1,1 @@
-export default function ConversionList() {
-  return null;
-}
+export default function ConversionList() { return null; }

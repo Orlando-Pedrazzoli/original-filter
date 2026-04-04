@@ -1,3 +1,1 @@
-export default function ProductCard() {
-  return null;
-}
+export default function ProductCard() { return null; }

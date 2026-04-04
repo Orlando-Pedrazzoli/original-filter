@@ -1,3 +1,1 @@
-export const pagarme = {
-  criarTransacao: async () => null,
-};
+export const pagarme = { criarTransacao: async () => null };

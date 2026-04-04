@@ -1,3 +1,1 @@
-export default function SEO() {
-  return null;
-}
+export default function SEO() { return null; }

@@ -1,3 +1,1 @@
-export default function BrandsGrid() {
-  return null;
-}
+export default function BrandsGrid() { return null; }

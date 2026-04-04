@@ -1,3 +1,1 @@
-export default function SearchFilters() {
-  return null;
-}
+export default function SearchFilters() { return null; }

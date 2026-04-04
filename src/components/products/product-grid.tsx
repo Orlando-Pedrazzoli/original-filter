@@ -1,3 +1,1 @@
-export default function ProductGrid() {
-  return null;
-}
+export default function ProductGrid() { return null; }

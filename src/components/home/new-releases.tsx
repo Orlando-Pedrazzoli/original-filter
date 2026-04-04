@@ -1,3 +1,1 @@
-export default function NewReleases() {
-  return null;
-}
+export default function NewReleases() { return null; }

@@ -1,3 +1,1 @@
-export default function Pagination() {
-  return null;
-}
+export default function Pagination() { return null; }

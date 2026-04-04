@@ -1,13 +1,3 @@
 import mongoose, { Schema } from 'mongoose';
-
-const OrderSchema = new Schema(
-  {
-    customer: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    items: [{ product: { type: Schema.Types.ObjectId, ref: 'Product' }, quantity: Number, price: Number }],
-    total: { type: Number, required: true },
-    status: { type: String, enum: ['pendente', 'pago', 'enviado', 'entregue', 'cancelado'], default: 'pendente' },
-  },
-  { timestamps: true }
-);
-
+const OrderSchema = new Schema({ customer: { type: Schema.Types.ObjectId, ref: 'User', required: true }, items: [{ product: { type: Schema.Types.ObjectId, ref: 'Product' }, quantity: Number, price: Number }], total: { type: Number, required: true }, status: { type: String, enum: ['pendente', 'pago', 'enviado', 'entregue', 'cancelado'], default: 'pendente' } }, { timestamps: true });
 export default mongoose.models.Order || mongoose.model('Order', OrderSchema);

@@ -1,3 +1,1 @@
-export default function LanguageSwitcher() {
-  return null;
-}
+export default function LanguageSwitcher() { return null; }

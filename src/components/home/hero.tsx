@@ -1,3 +1,1 @@
-export default function Hero() {
-  return null;
-}
+export default function Hero() { return null; }

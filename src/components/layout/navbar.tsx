@@ -1,3 +1,1 @@
-export default function Navbar() {
-  return null;
-}
+export default function Navbar() { return null; }

@@ -1,3 +1,1 @@
-export const cloudinary = {
-  url: (publicId: string) => publicId,
-};
+export const cloudinary = { url: (publicId: string) => publicId };

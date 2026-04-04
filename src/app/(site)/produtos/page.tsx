@@ -1,3 +1,3 @@
 export default function ProdutosPage() {
-  return <h1 className="text-xl font-bold">Catálogo — Em breve</h1>;
+  return <h1 className="text-xl font-bold">Catalogo - Em breve</h1>;
 }

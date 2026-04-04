@@ -1,3 +1,1 @@
-export default function ApplicationsTable() {
-  return null;
-}
+export default function ApplicationsTable() { return null; }

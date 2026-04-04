@@ -1,16 +1,3 @@
 import mongoose, { Schema } from 'mongoose';
-
-const PostSchema = new Schema(
-  {
-    title: { type: String, required: true },
-    slug: { type: String, required: true, unique: true },
-    content: { type: String, default: '' },
-    excerpt: { type: String, default: '' },
-    coverImage: { type: String, default: '' },
-    isPublished: { type: Boolean, default: false },
-    author: { type: Schema.Types.ObjectId, ref: 'User' },
-  },
-  { timestamps: true }
-);
-
+const PostSchema = new Schema({ title: { type: String, required: true }, slug: { type: String, required: true, unique: true }, content: { type: String, default: '' }, excerpt: { type: String, default: '' }, coverImage: { type: String, default: '' }, isPublished: { type: Boolean, default: false }, author: { type: Schema.Types.ObjectId, ref: 'User' } }, { timestamps: true });
 export default mongoose.models.Post || mongoose.model('Post', PostSchema);
