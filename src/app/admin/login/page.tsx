@@ -42,10 +42,11 @@ export default function AdminLoginPage() {
   return (
     <div className="flex min-h-screen">
       {/* Left Panel — Brand */}
-      <div className="bg-dark hidden w-1/2 flex-col items-center justify-center p-12 lg:flex">
-        {/* Grid pattern */}
+      <div className="bg-dark relative hidden w-1/2 flex-col items-center justify-center p-12 lg:flex">
+        <div className="bg-brand absolute top-0 left-0 h-1 w-full" />
+
         <div
-          className="absolute inset-0 opacity-[0.03]"
+          className="pointer-events-none absolute inset-0 opacity-[0.03]"
           style={{
             backgroundImage:
               'linear-gradient(rgba(255,215,0,.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,215,0,.3) 1px, transparent 1px)',
@@ -63,9 +64,7 @@ export default function AdminLoginPage() {
             style={{ width: 'auto' }}
             priority
           />
-          <h1 className="from-brand via-brand-light to-brand mt-8 bg-gradient-to-r bg-clip-text text-3xl font-bold text-transparent">
-            Filtrando o futuro.
-          </h1>
+          <h1 className="text-brand mt-8 text-3xl font-bold">Filtrando o futuro.</h1>
           <p className="mt-4 text-sm text-gray-500">
             Painel administrativo para gerenciamento de produtos, pedidos, contatos e conteúdo do
             site.
@@ -75,17 +74,21 @@ export default function AdminLoginPage() {
             {['IATF 16949:2016', 'QS 9000', 'ISO 9001'].map((cert) => (
               <span
                 key={cert}
-                className="border-brand/20 bg-brand/5 text-brand/60 rounded-full border px-3 py-1 text-[10px] font-semibold tracking-wider uppercase"
+                className="rounded border border-gray-700 px-3 py-1.5 text-xs text-gray-500"
               >
                 {cert}
               </span>
             ))}
           </div>
         </div>
+
+        <p className="absolute bottom-8 text-xs text-gray-600">
+          &copy; {new Date().getFullYear()} Original Filter. Acesso restrito.
+        </p>
       </div>
 
       {/* Right Panel — Login Form */}
-      <div className="flex w-full flex-col items-center justify-center px-6 lg:w-1/2">
+      <div className="flex w-full items-center justify-center bg-white px-6 lg:w-1/2">
         <div className="w-full max-w-sm">
           {/* Mobile logo */}
           <div className="mb-8 flex justify-center lg:hidden">
@@ -100,57 +103,60 @@ export default function AdminLoginPage() {
             />
           </div>
 
-          <h2 className="text-dark text-center text-2xl font-bold">Acesso ao Painel</h2>
+          <h2 className="text-dark text-center text-2xl font-bold">Acesso Administrativo</h2>
           <p className="text-muted-dark mt-2 text-center text-sm">
-            Insira suas credenciais para acessar o painel administrativo.
+            Insira suas credenciais para acessar o painel.
           </p>
 
           {/* Error message */}
           {error && (
-            <div className="bg-danger/10 text-danger mt-6 flex items-center gap-2 rounded-lg px-4 py-3 text-sm">
-              <AlertCircle className="h-4 w-4 shrink-0" />
-              {error}
+            <div className="bg-danger/5 border-danger/20 text-danger mt-6 flex items-center gap-3 rounded-lg border px-4 py-3 text-sm">
+              <AlertCircle className="h-4 w-4 flex-shrink-0" />
+              <span>{error}</span>
             </div>
           )}
 
-          {/* Form */}
-          <div className="mt-8 space-y-5">
+          {/* ══════ FORM — corrigido com <form> ══════ */}
+          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
             {/* Email */}
             <div>
-              <label htmlFor="email" className="text-dark mb-1.5 block text-sm font-medium">
+              <label htmlFor="admin-email" className="text-dark mb-1.5 block text-sm font-medium">
                 E-mail
               </label>
               <div className="relative">
-                <Mail className="text-muted absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2" />
+                <Mail className="text-muted pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2" />
                 <input
-                  id="email"
+                  id="admin-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@originalfilter.com"
-                  className="border-surface-alt text-dark placeholder:text-muted focus:border-brand focus:ring-brand/20 h-11 w-full rounded-lg border bg-white pr-4 pl-10 text-sm transition-all outline-none focus:ring-2"
                   required
                   autoComplete="email"
+                  className="border-surface-alt text-dark placeholder:text-muted focus:border-brand focus:ring-brand/20 h-11 w-full rounded-lg border bg-white pr-4 pl-10 text-sm transition-all outline-none focus:ring-2"
                 />
               </div>
             </div>
 
             {/* Password */}
             <div>
-              <label htmlFor="password" className="text-dark mb-1.5 block text-sm font-medium">
+              <label
+                htmlFor="admin-password"
+                className="text-dark mb-1.5 block text-sm font-medium"
+              >
                 Senha
               </label>
               <div className="relative">
-                <Lock className="text-muted absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2" />
+                <Lock className="text-muted pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2" />
                 <input
-                  id="password"
+                  id="admin-password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="border-surface-alt text-dark placeholder:text-muted focus:border-brand focus:ring-brand/20 h-11 w-full rounded-lg border bg-white pr-11 pl-10 text-sm transition-all outline-none focus:ring-2"
                   required
                   autoComplete="current-password"
+                  className="border-surface-alt text-dark placeholder:text-muted focus:border-brand focus:ring-brand/20 h-11 w-full rounded-lg border bg-white pr-11 pl-10 text-sm transition-all outline-none focus:ring-2"
                 />
                 <button
                   type="button"
@@ -163,12 +169,11 @@ export default function AdminLoginPage() {
               </div>
             </div>
 
-            {/* Submit */}
+            {/* Submit — type="submit" dentro do <form> */}
             <button
-              type="button"
-              onClick={handleSubmit}
+              type="submit"
               disabled={loading || !email || !password}
-              className="bg-brand text-dark hover:bg-brand-hover hover:shadow-brand/25 flex h-11 w-full items-center justify-center gap-2 rounded-lg text-sm font-bold transition-all hover:shadow-lg disabled:opacity-50"
+              className="bg-brand text-dark hover:bg-brand-hover flex h-11 w-full items-center justify-center gap-2 rounded-lg text-sm font-bold transition-all disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? (
                 <>
@@ -176,14 +181,16 @@ export default function AdminLoginPage() {
                   Entrando...
                 </>
               ) : (
-                'Entrar'
+                'Entrar no Painel'
               )}
             </button>
-          </div>
+          </form>
 
-          {/* Footer */}
-          <p className="text-muted mt-8 text-center text-xs">
-            &copy; {new Date().getFullYear()} Original Filter — Painel Admin
+          {/* Back to site */}
+          <p className="mt-8 text-center text-xs text-gray-400">
+            <a href="/" className="hover:text-brand transition-colors">
+              ← Voltar ao site
+            </a>
           </p>
         </div>
       </div>
