@@ -1,3 +1,12 @@
+/* ══════════════════════════════════════════
+   Original Filter — Header
+   ══════════════════════════════════════════
+   FLUXOS DE LOGIN SEPARADOS:
+   - Ícone User → /conta/login (cliente e-commerce)
+   - Ícone ShieldCheck → /admin (só visível para admins logados)
+   - Ícone cadeado no Footer → /admin/login (acesso discreto)
+   ══════════════════════════════════════════ */
+
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -22,7 +31,6 @@ import {
 import { NAVIGATION, LANGUAGES } from '@/lib/constants';
 import { cn } from '@/utils/cn';
 
-// Close dropdown when clicking outside
 function useClickOutside(ref: React.RefObject<HTMLElement | null>, handler: () => void) {
   useEffect(() => {
     function listener(e: MouseEvent) {
@@ -153,7 +161,7 @@ export default function Header() {
               )}
             </div>
 
-            {/* User Account (Customer) */}
+            {/* ══════ User Account (Cliente E-commerce) ══════ */}
             <div className="relative" ref={userRef}>
               <button
                 onClick={() => {
@@ -182,7 +190,7 @@ export default function Header() {
                       {/* Customer links */}
                       <div className="py-1">
                         <Link
-                          href="/minha-conta"
+                          href="/conta"
                           onClick={() => setUserOpen(false)}
                           className="hover:bg-dark-mid hover:text-brand flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-300 transition-colors"
                         >
@@ -190,7 +198,7 @@ export default function Header() {
                           Minha Conta
                         </Link>
                         <Link
-                          href="/meus-pedidos"
+                          href="/conta/pedidos"
                           onClick={() => setUserOpen(false)}
                           className="hover:bg-dark-mid hover:text-brand flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-300 transition-colors"
                         >
@@ -198,7 +206,7 @@ export default function Header() {
                           Meus Pedidos
                         </Link>
                         <Link
-                          href="/favoritos"
+                          href="/conta/favoritos"
                           onClick={() => setUserOpen(false)}
                           className="hover:bg-dark-mid hover:text-brand flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-300 transition-colors"
                         >
@@ -226,8 +234,9 @@ export default function Header() {
                       <p className="mb-3 text-sm text-gray-400">
                         Acesse sua conta para ver pedidos e favoritos.
                       </p>
+                      {/* ══════ CLIENTE vai para /conta/login ══════ */}
                       <Link
-                        href="/admin/login"
+                        href="/conta/login"
                         onClick={() => setUserOpen(false)}
                         className="bg-brand text-dark hover:bg-brand-hover block w-full rounded-lg py-2.5 text-center text-sm font-bold transition-colors"
                       >
@@ -236,7 +245,7 @@ export default function Header() {
                       <p className="mt-3 text-center text-xs text-gray-500">
                         Novo cliente?{' '}
                         <Link
-                          href="/registrar"
+                          href="/conta/registrar"
                           onClick={() => setUserOpen(false)}
                           className="text-brand hover:underline"
                         >
@@ -249,7 +258,7 @@ export default function Header() {
               )}
             </div>
 
-            {/* Admin Panel (only visible for admins) */}
+            {/* ══════ Admin Panel (só visível para admins logados) ══════ */}
             {isAdmin && (
               <Link
                 href="/admin"
@@ -261,14 +270,14 @@ export default function Header() {
               </Link>
             )}
 
-            {/* Cart (future) */}
+            {/* Cart */}
             <Link
               href="/carrinho"
               className="hover:bg-dark-mid relative flex h-9 w-9 items-center justify-center rounded-full transition-colors"
               aria-label="Carrinho"
             >
               <ShoppingCart className="h-5 w-5" />
-              {/* Badge - uncomment when cart has items */}
+              {/* Badge — descomentar quando tiver itens no carrinho */}
               {/* <span className="bg-brand text-dark absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold">3</span> */}
             </Link>
 
@@ -292,10 +301,11 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* ══════ Mobile Menu ══════ */}
       {mobileOpen && (
         <div className="border-dark-mid bg-dark-soft border-t lg:hidden">
           <nav className="container-custom py-4">
+            {/* Navigation links */}
             {NAVIGATION.map((item) => (
               <div key={item.label}>
                 <Link
@@ -322,14 +332,14 @@ export default function Header() {
               </div>
             ))}
 
-            {/* Mobile: User & Admin section */}
+            {/* Mobile: User & Cart section */}
             <div className="border-dark-mid mt-4 space-y-2 border-t pt-4">
               {isLoggedIn ? (
                 <>
                   <p className="px-1 text-xs text-gray-500">{session.user?.name}</p>
 
                   <Link
-                    href="/minha-conta"
+                    href="/conta"
                     onClick={() => setMobileOpen(false)}
                     className="hover:text-brand flex items-center gap-2 py-2 text-sm text-gray-300"
                   >
@@ -338,7 +348,7 @@ export default function Header() {
                   </Link>
 
                   <Link
-                    href="/meus-pedidos"
+                    href="/conta/pedidos"
                     onClick={() => setMobileOpen(false)}
                     className="hover:text-brand flex items-center gap-2 py-2 text-sm text-gray-300"
                   >
@@ -361,7 +371,7 @@ export default function Header() {
                       onClick={() => setMobileOpen(false)}
                       className="text-brand flex items-center gap-2 py-2 text-sm font-medium"
                     >
-                      <ShieldCheck className="h-4 w-4" />
+                      <LayoutDashboard className="h-4 w-4" />
                       Painel Admin
                     </Link>
                   )}
@@ -379,12 +389,12 @@ export default function Header() {
                 </>
               ) : (
                 <Link
-                  href="/admin/login"
+                  href="/conta/login"
                   onClick={() => setMobileOpen(false)}
                   className="flex items-center gap-2 py-2 text-sm text-gray-300 hover:text-white"
                 >
                   <User className="h-4 w-4" />
-                  Entrar
+                  Entrar / Criar Conta
                 </Link>
               )}
 

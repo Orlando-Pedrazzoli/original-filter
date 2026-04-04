@@ -1,6 +1,13 @@
+/* ══════════════════════════════════════════
+   Original Filter — Footer
+   ══════════════════════════════════════════
+   Ícone de cadeado discreto no bottom bar
+   para acesso ao login administrativo.
+   ══════════════════════════════════════════ */
+
 import Link from 'next/link';
 import Image from 'next/image';
-import { Phone, Mail, MapPin } from 'lucide-react';
+import { Phone, Mail, MapPin, Lock } from 'lucide-react';
 import { CONTACT, CERTIFICATIONS } from '@/lib/constants';
 
 function FacebookIcon({ className }: { className?: string }) {
@@ -165,22 +172,34 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Bottom */}
+      {/* ══════ Bottom Bar — com ícone cadeado admin ══════ */}
       <div className="border-t border-gray-800">
         <div className="container-custom flex flex-col items-center justify-between gap-2 py-6 text-xs text-gray-500 sm:flex-row">
           <p>&copy; {currentYear} Original Filter. Todos os direitos reservados.</p>
 
-          <p>
-            Desenvolvido por{' '}
-            <a
-              href="https://pedrazzolidigital.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-brand text-gray-400 transition-colors"
+          <div className="flex items-center gap-4">
+            <p>
+              Desenvolvido por{' '}
+              <a
+                href="https://pedrazzolidigital.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-brand text-gray-400 transition-colors"
+              >
+                Pedrazzoli Digital
+              </a>
+            </p>
+
+            {/* ══════ Cadeado Admin — discreto ══════ */}
+            <Link
+              href="/admin/login"
+              className="text-gray-700 transition-colors hover:text-gray-400"
+              aria-label="Acesso administrativo"
+              title="Acesso administrativo"
             >
-              Pedrazzoli Digital
-            </a>
-          </p>
+              <Lock className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
