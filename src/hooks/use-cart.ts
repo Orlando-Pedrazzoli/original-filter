@@ -1,0 +1,3 @@
+export function useCart() {
+  return { items: [], addItem: () => {}, removeItem: () => {}, total: 0 };
+}
