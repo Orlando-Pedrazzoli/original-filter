@@ -2,6 +2,9 @@
   "name": "original-filter",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -10,7 +13,9 @@
     "format": "prettier --write .",
     "postbuild": "next-sitemap",
     "scrape": "npx tsx scripts/scrape-catalog.ts",
-    "seed:admin": "npx tsx scripts/seed-admin.ts"
+    "seed:admin": "npx tsx scripts/seed-admin.ts",
+    "seed:catalog": "npx tsx scripts/seed-products-from-excel.ts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.11.1",
@@ -28,9 +33,11 @@
     "cloudinary": "^2.9.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "dotenv": "^17.4.2",
     "framer-motion": "^12.38.0",
     "jose": "^6.2.2",
     "lucide-react": "^1.7.0",
+    "mercadopago": "^2.10.0",
     "mongoose": "^9.3.3",
     "nanoid": "^5.1.7",
     "next": "16.2.1",
@@ -38,7 +45,6 @@
     "next-cloudinary": "^6.17.5",
     "next-sitemap": "^4.2.3",
     "nodemailer": "^7.0.13",
-    "pagarme": "^4.35.2",
     "rate-limiter-flexible": "^10.0.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
@@ -46,7 +52,8 @@
     "sharp": "^0.34.5",
     "slugify": "^1.6.8",
     "tailwind-merge": "^3.5.0",
-    "zod": "^4.3.6"
+    "xlsx": "^0.18.5",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -64,6 +71,7 @@
     "prettier-plugin-tailwindcss": "^0.7.2",
     "puppeteer": "^24.40.0",
     "tailwindcss": "^4",
+    "tsx": "^4.22.3",
     "typescript": "^5"
   }
 }
