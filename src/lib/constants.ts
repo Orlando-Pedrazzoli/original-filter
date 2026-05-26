@@ -7,7 +7,9 @@ import type { NavItem, ProductLine, FilterCategory, MainBrand, Language } from '
 // ── Marca ──
 export const BRAND = {
   name: 'Original Filter',
-  slogan: 'Filtrando o futuro.',
+  slogan: 'Qualidade Superior em Filtros Automotivos e Sensores',
+  sloganShort: 'Especialista em Filtros e Sensores',
+  url: 'https://originalfilter.com',
   yellow: '#FFD700',
   yellowLight: '#FFDE00',
   black: '#000000',
@@ -22,13 +24,17 @@ export const BRAND = {
 // ── Contato ──
 export const CONTACT = {
   phone: '+55 11 4613-3454',
+  phoneRaw: '+551146133454',
   whatsapp: '+5511461334554',
   whatsappLink: 'https://wa.me/5511461334554',
   sac: '0800 778 2000',
+  sacRaw: '08007782000',
   email: 'contato@originalfilter.com',
   address: 'Cotia, SP — Brasil',
+  city: 'Cotia',
+  state: 'SP',
   facebook: 'https://www.facebook.com/originalfilter',
-  instagram: 'https://www.instagram.com/originalfilter',
+  instagram: 'https://www.instagram.com/originalfilterco',
 } as const;
 
 // ── Linhas de Produto (por aplicação/segmento) ──

@@ -9,6 +9,8 @@
    - tipo             : filter | sensor | accessory
    - categoria        : slug da categoria
    - marca            : slug da brand
+   - linha            : slug da linha de veículo (rodoviario, agricola, etc.)
+                        filtra produtos que tem aplicação para marcas dessa linha
    - aplicacao_marca  : filtra por applications.brand (ex: VOLVO)
    - aplicacao_modelo : filtra por applications.model
    - status           : active | inactive | discontinued (default: active)
@@ -97,6 +99,7 @@ export async function GET(req: NextRequest) {
     const tipo = sp.get('tipo');
     const categoria = sp.get('categoria');
     const marca = sp.get('marca');
+    const linha = sp.get('linha');
     const aplicacaoMarca = sp.get('aplicacao_marca')?.toUpperCase();
     const aplicacaoModelo = sp.get('aplicacao_modelo');
     const status = sp.get('status') ?? 'active';
@@ -127,6 +130,25 @@ export async function GET(req: NextRequest) {
       const brandDoc = await Brand.findOne({ slug: marca }).select('_id');
       if (brandDoc) filter.brand = brandDoc._id;
       else return NextResponse.json({ items: [], total: 0, page, limit });
+    }
+
+    if (linha) {
+      // linha é a category de Brand. Pega todos os nomes de marcas dessa linha
+      // e filtra produtos que tenham applications.brand ∈ esses nomes.
+      const Brand = (await import('@/models/Brand')).default;
+      const brandsInLine = await Brand.find({
+        category: linha as never,
+        isActive: true,
+      })
+        .select('name')
+        .lean<Array<{ name: string }>>();
+
+      if (brandsInLine.length === 0) {
+        return NextResponse.json({ items: [], total: 0, page, limit, pages: 0 });
+      }
+
+      const brandNames = brandsInLine.map((b) => b.name.toUpperCase());
+      filter['applications.brand'] = { $in: brandNames };
     }
 
     if (aplicacaoMarca) filter['applications.brand'] = aplicacaoMarca;

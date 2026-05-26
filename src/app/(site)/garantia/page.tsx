@@ -1,186 +1,256 @@
+/* ══════════════════════════════════════════
+   /garantia — Política de Garantia
+   ──────────────────────────────────────────
+   Server Component (SEO importante para garantia).
+   Conteúdo modernizado preservando os fatos do site original.
+
+   Estrutura (6 seções):
+   1. PageHero dark
+   2. Statement institucional + atalhos
+   3. WarrantyCoverage — pré-requisitos + responsabilidade total
+   4. WarrantyExclusions — exclusões + como acionar
+   5. CTA final
+   ══════════════════════════════════════════ */
+
 import type { Metadata } from 'next';
-import {
-  ShieldCheck,
-  Package,
-  Wrench,
-  HandCoins,
-  AlertTriangle,
-  XCircle,
-  HelpCircle,
-  Phone,
-} from 'lucide-react';
-import PageHeader from '@/components/shared/page-header';
+import Link from 'next/link';
+import { ArrowRight, FileText, Phone, ShieldCheck } from 'lucide-react';
+import { PageHero } from '@/components/shared/page-hero';
+import { WarrantyCoverage } from '@/components/warranty/warranty-coverage';
+import { WarrantyExclusions } from '@/components/warranty/warranty-exclusions';
 import { CONTACT } from '@/lib/constants';
 
 export const metadata: Metadata = {
-  title: 'Política de Garantia | Original Filter',
+  title: 'Política de Garantia — Original Filter',
   description:
-    'Conheça a política de garantia da Original Filter. Cobertura contra defeitos de fabricação, orientações de armazenamento e instalação, e suporte técnico dedicado.',
-  openGraph: {
-    title: 'Política de Garantia | Original Filter',
-    description: 'Garantia contra defeitos de fabricação com suporte técnico especializado.',
-  },
+    'Política de Garantia Original Filter: cobertura para defeitos de ' +
+    'fabricação, pré-requisitos de armazenamento e instalação, exclusões ' +
+    'e processo completo de acionamento da garantia.',
 };
-
-const COVERAGE = [
-  {
-    icon: Package,
-    title: 'Armazenamento Adequado',
-    text: 'Mantenha os filtros em locais isentos de umidade e poeira, na embalagem original. A integridade da embalagem é fundamental para proteger os filtros até a instalação.',
-  },
-  {
-    icon: Wrench,
-    title: 'Instalação Profissional',
-    text: 'Conte com um profissional treinado para realizar a instalação. Siga as especificações presentes nos catálogos ou manuais do fabricante do veículo, máquina ou equipamento.',
-  },
-  {
-    icon: HandCoins,
-    title: 'Responsabilidade Total',
-    text: 'Se houver avaria comprovada por defeito de fabricação, assumimos todos os custos de reparo necessários para devolver a máquina à condição anterior à falha.',
-  },
-];
-
-const EXCLUSIONS = [
-  {
-    icon: AlertTriangle,
-    title: 'Modificações e Alterações',
-    text: 'A garantia não cobre filtros que tenham sido modificados ou alterados. Qualquer intervenção não autorizada pode invalidar a cobertura.',
-  },
-  {
-    icon: XCircle,
-    title: 'Aplicação Divergente',
-    text: 'Se o filtro for aplicado de maneira divergente ao catálogo ou manual do fabricante, a garantia não será válida.',
-  },
-  {
-    icon: AlertTriangle,
-    title: 'Danos Externos',
-    text: 'Não cobrimos danos causados por agentes externos, como acidentes, falhas de energia elétrica, uso inadequado ou negligência.',
-  },
-  {
-    icon: XCircle,
-    title: 'Desmontagem e Substituição',
-    text: 'Custos relacionados à desmontagem ou substituição de produtos soldados ou afixados não estão incluídos na garantia.',
-  },
-];
 
 export default function GarantiaPage() {
   return (
     <>
-      <PageHeader
-        title="Política de Garantia"
-        subtitle="Qualidade e confiança em cada filtro. Nossa garantia abrange defeitos de fabricação quando seguidas as orientações de uso."
-        breadcrumbs={[{ label: 'A Empresa', href: '/sobre' }, { label: 'Política de Garantia' }]}
+      {/* ─── 1. Hero ─── */}
+      <PageHero
+        eyebrow="Política de Garantia"
+        title="Qualidade e confiança na filtragem."
+        description="Nossa garantia cobre defeitos de fabricação quando observadas as condições corretas de armazenamento e instalação. Conheça o que está coberto, as exclusões e como acionar nossa equipe técnica."
+        breadcrumbs={[
+          { label: 'Início', href: '/' },
+          { label: 'Quem somos', href: '/sobre' },
+          { label: 'Política de Garantia' },
+        ]}
+        variant="dark"
+        size="lg"
       />
 
-      {/* ── O que a Garantia Cobre ── */}
-      <section className="py-16 md:py-24">
-        <div className="container-custom">
-          <span className="text-brand-dark text-sm font-semibold tracking-widest uppercase">
-            Cobertura
-          </span>
-          <h2 className="font-heading text-dark mt-2 text-2xl font-bold md:text-3xl">
-            O que nossa garantia cobre
-          </h2>
-          <p className="text-muted-dark mt-4 max-w-2xl">
-            A Original Filter garante seus produtos contra defeitos de fabricação, desde que as
-            seguintes orientações sejam observadas:
-          </p>
+      {/* ─── 2. Statement institucional ─── */}
+      <section className="bg-brand-white py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-12">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-16">
+            {/* Lateral fixa */}
+            <div className="lg:col-span-4">
+              <div className="lg:sticky lg:top-32">
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="bg-brand-yellow h-px w-8" />
+                  <span className="text-brand-iron font-mono text-[11px] tracking-[0.25em] uppercase">
+                    Compromisso por escrito
+                  </span>
+                </div>
+                <h2
+                  className="font-display text-brand-black leading-[0.95] font-black tracking-tight"
+                  style={{
+                    fontSize: 'clamp(1.875rem, 4vw, 3rem)',
+                    letterSpacing: '-0.035em',
+                  }}
+                >
+                  Garantia
+                  <br />
+                  <span className="text-brand-yellow-deep">Original Filter.</span>
+                </h2>
 
-          <div className="mt-12 grid gap-8 lg:grid-cols-3">
-            {COVERAGE.map((item) => (
-              <div
-                key={item.title}
-                className="border-surface-alt hover:border-brand/30 hover:shadow-brand/5 rounded-2xl border p-8 transition-all hover:shadow-lg"
+                {/* Mini-info cards no sidebar */}
+                <div className="border-brand-mist mt-8 hidden flex-col gap-3 border-t pt-8 lg:flex">
+                  <SidebarInfo
+                    icon={<ShieldCheck />}
+                    label="Cobertura"
+                    value="Defeitos de fabricação"
+                  />
+                  <SidebarInfo
+                    icon={<FileText />}
+                    label="Documentação"
+                    value="Embalagem + nota fiscal"
+                  />
+                  <SidebarInfo icon={<Phone />} label="Acionamento" value={CONTACT.phone} />
+                </div>
+              </div>
+            </div>
+
+            {/* Texto principal */}
+            <div className="text-brand-iron space-y-6 text-base leading-relaxed md:text-lg lg:col-span-8">
+              <p>
+                A <strong className="text-brand-black">Original Filter</strong> é uma empresa que
+                preza pela qualidade dos seus filtros e pelo compromisso com seus clientes. Nossa
+                garantia abrange possíveis defeitos de fabricação, desde que sejam seguidas as
+                orientações de armazenamento e instalação descritas nesta política.
+              </p>
+
+              <p>
+                Comprovado o defeito de fabricação,{' '}
+                <strong className="text-brand-black">assumimos todos os custos</strong> de reparo
+                necessários para devolver seu equipamento à condição anterior ao momento da falha.
+                Nossa equipe técnica está pronta para avaliar e solucionar qualquer ocorrência
+                relacionada aos nossos produtos.
+              </p>
+
+              <p>
+                Além desta garantia por escrito, reforçamos nosso compromisso com a qualidade em
+                cada filtro produzido. Nossa equipe de engenheiros e técnicos trabalha continuamente
+                para oferecer produtos confiáveis e eficientes — auditados pelas normas IATF
+                16949:2016, QS 9000 e ISO 9001.
+              </p>
+
+              <p className="font-display text-brand-black text-lg font-semibold md:text-xl">
+                Escolha a Original Filter e tenha a tranquilidade de contar com filtros de alta
+                performance e uma garantia que valoriza a sua satisfação.
+              </p>
+
+              {/* Atalhos âncora */}
+              <div className="flex flex-wrap gap-2 pt-4">
+                <Link
+                  href="#pre-requisitos"
+                  className="text-brand-iron border-brand-mist hover:border-brand-black hover:text-brand-black inline-flex items-center gap-1.5 border px-3 py-1.5 font-mono text-xs tracking-widest uppercase transition"
+                  style={{ borderRadius: 'var(--radius-edge)' }}
+                >
+                  ↓ Pré-requisitos
+                </Link>
+                <Link
+                  href="#exclusoes"
+                  className="text-brand-iron border-brand-mist hover:border-brand-black hover:text-brand-black inline-flex items-center gap-1.5 border px-3 py-1.5 font-mono text-xs tracking-widest uppercase transition"
+                  style={{ borderRadius: 'var(--radius-edge)' }}
+                >
+                  ↓ Exclusões
+                </Link>
+                <Link
+                  href="#acionar"
+                  className="text-brand-iron border-brand-mist hover:border-brand-black hover:text-brand-black inline-flex items-center gap-1.5 border px-3 py-1.5 font-mono text-xs tracking-widest uppercase transition"
+                  style={{ borderRadius: 'var(--radius-edge)' }}
+                >
+                  ↓ Como acionar
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 3. Pré-requisitos + Responsabilidade Total ─── */}
+      <div id="pre-requisitos">
+        <WarrantyCoverage />
+      </div>
+
+      {/* ─── 4. Exclusões + Como Acionar ─── */}
+      <div id="exclusoes">
+        <WarrantyExclusions />
+      </div>
+
+      {/* O id "acionar" precisa ficar no início da seção "Como acionar"
+          que faz parte do WarrantyExclusions. Para isso, marcamos o pai
+          como id alternativo. Em produção, se quiser id exato no "Como
+          acionar", basta extrair a seção em componente próprio. */}
+      <div id="acionar" />
+
+      {/* ─── 5. CTA final ─── */}
+      <section className="bg-brand-yellow relative overflow-hidden py-16 md:py-20">
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.06]"
+          style={{
+            backgroundImage:
+              'repeating-linear-gradient(135deg, transparent, transparent 16px, #000 16px, #000 17px)',
+          }}
+        />
+
+        <div className="relative mx-auto max-w-7xl px-4 md:px-12">
+          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2">
+            <div>
+              <div className="mb-4 flex items-center gap-3">
+                <ShieldCheck className="text-brand-black size-5" strokeWidth={2} />
+                <span className="text-brand-black/70 font-mono text-[11px] tracking-[0.25em] uppercase">
+                  Estamos à disposição
+                </span>
+              </div>
+              <h2
+                className="font-display text-brand-black leading-[0.95] font-black tracking-tight"
+                style={{
+                  fontSize: 'clamp(1.875rem, 4.5vw, 3rem)',
+                  letterSpacing: '-0.035em',
+                }}
               >
-                <div className="bg-brand/10 text-brand flex h-12 w-12 items-center justify-center rounded-xl">
-                  <item.icon className="h-6 w-6" />
-                </div>
-                <h3 className="font-heading text-dark mt-4 text-lg font-bold">{item.title}</h3>
-                <p className="text-muted-dark mt-3 text-sm leading-relaxed">{item.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Exclusões ── */}
-      <section className="bg-surface py-16 md:py-24">
-        <div className="container-custom">
-          <span className="text-danger text-sm font-semibold tracking-widest uppercase">
-            Atenção
-          </span>
-          <h2 className="font-heading text-dark mt-2 text-2xl font-bold md:text-3xl">
-            Exclusões e limitações
-          </h2>
-          <p className="text-muted-dark mt-4 max-w-2xl">
-            É importante conhecer as situações em que a garantia não se aplica:
-          </p>
-
-          <div className="mt-12 grid gap-6 sm:grid-cols-2">
-            {EXCLUSIONS.map((item, i) => (
-              <div key={i} className="flex gap-4 rounded-xl bg-white p-6 shadow-sm">
-                <div className="bg-danger/10 text-danger flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
-                  <item.icon className="h-5 w-5" />
-                </div>
-                <div>
-                  <h3 className="font-heading text-dark text-base font-semibold">{item.title}</h3>
-                  <p className="text-muted-dark mt-1 text-sm leading-relaxed">{item.text}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Compromisso + Suporte ── */}
-      <section className="bg-dark py-16 md:py-24">
-        <div className="container-custom">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="bg-brand mx-auto flex h-16 w-16 items-center justify-center rounded-2xl">
-              <ShieldCheck className="text-dark h-8 w-8" />
+                Dúvidas sobre garantia
+                <br />
+                ou já precisa acionar?
+              </h2>
+              <p className="text-brand-black/80 mt-5 max-w-xl text-base md:text-lg">
+                Nossa equipe técnica está pronta para analisar seu caso. Ligue ou envie sua
+                solicitação pelo formulário com os dados do produto.
+              </p>
             </div>
-            <h2 className="font-heading mt-6 text-2xl font-bold text-white md:text-3xl">
-              Compromisso com a qualidade
-            </h2>
-            <p className="text-muted mt-4 leading-relaxed">
-              Além da garantia por escrito, reforçamos nosso compromisso com a qualidade em cada
-              filtro produzido. Nossa equipe de engenheiros e técnicos trabalha constantemente para
-              oferecer produtos confiáveis e eficientes.
-            </p>
-          </div>
 
-          {/* SAC */}
-          <div className="mx-auto mt-12 max-w-md rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
-            <div className="bg-brand text-dark mx-auto flex h-12 w-12 items-center justify-center rounded-xl">
-              <Phone className="h-6 w-6" />
+            <div className="flex flex-col gap-3 lg:items-end">
+              <a
+                href={`tel:${CONTACT.phoneRaw}`}
+                className="bg-brand-black hover:bg-brand-graphite font-display inline-flex w-full items-center justify-center gap-2 px-6 py-3.5 text-sm font-semibold tracking-wide text-white uppercase transition lg:w-auto"
+                style={{ borderRadius: 'var(--radius-edge)' }}
+              >
+                <Phone className="size-4" />
+                {CONTACT.phone}
+              </a>
+              <Link
+                href="/contato?assunto=garantia"
+                className="border-brand-black hover:bg-brand-black font-display inline-flex w-full items-center justify-center gap-2 border-2 px-6 py-3.5 text-sm font-semibold tracking-wide uppercase transition hover:text-white lg:w-auto"
+                style={{ borderRadius: 'var(--radius-edge)' }}
+              >
+                Formulário de garantia
+                <ArrowRight className="size-4" />
+              </Link>
+              <Link
+                href="/qualidade"
+                className="border-brand-black hover:bg-brand-black font-display inline-flex w-full items-center justify-center gap-2 border-2 px-6 py-3.5 text-sm font-semibold tracking-wide uppercase transition hover:text-white lg:w-auto"
+                style={{ borderRadius: 'var(--radius-edge)' }}
+              >
+                Política de qualidade
+                <ArrowRight className="size-4" />
+              </Link>
             </div>
-            <p className="text-brand mt-4 text-sm font-semibold tracking-widest uppercase">
-              Suporte Técnico
-            </p>
-            <p className="font-heading mt-2 text-2xl font-bold text-white">{CONTACT.sac}</p>
-            <p className="text-muted mt-1 text-sm">Ligação gratuita — SAC Original Filter</p>
-            <a
-              href="/contato"
-              className="bg-brand text-dark hover:bg-brand-hover mt-6 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-colors"
-            >
-              <HelpCircle className="h-4 w-4" />
-              Enviar Solicitação
-            </a>
           </div>
-        </div>
-      </section>
-
-      {/* ── Nota Importante ── */}
-      <section className="bg-brand/10 py-8">
-        <div className="container-custom">
-          <p className="text-muted-dark mx-auto max-w-3xl text-center text-sm leading-relaxed">
-            <strong className="text-dark">Nota:</strong> Para melhor desempenho dos motores e
-            equipamentos, todos os filtros devem ser trocados regularmente antes da total saturação.
-            As trocas devem seguir o prazo recomendado pelo fabricante — essa é a única forma de
-            reduzir o desgaste e prolongar a vida útil do motor.
-          </p>
         </div>
       </section>
     </>
+  );
+}
+
+// ─── Sidebar info card ───
+function SidebarInfo({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex items-center gap-3">
+      <div className="bg-brand-snow text-brand-yellow-deep flex size-8 shrink-0 items-center justify-center [&>svg]:size-4">
+        {icon}
+      </div>
+      <div className="min-w-0">
+        <div className="text-brand-iron font-mono text-[10px] tracking-[0.22em] uppercase">
+          {label}
+        </div>
+        <div className="font-display text-brand-black truncate text-sm font-bold">{value}</div>
+      </div>
+    </div>
   );
 }

@@ -1,366 +1,335 @@
-'use client';
+/* ══════════════════════════════════════════
+   /contato — Página de Contato
+   ──────────────────────────────────────────
+   Estrutura (5 seções):
+   1. PageHero compacto
+   2. Statement curto + atalhos âncora
+   3. Layout principal: Formulário (8 cols) + Canais (4 cols)
+   4. FAQ — perguntas rápidas
+   5. CTA institucional
+   ══════════════════════════════════════════ */
 
-import { useState } from 'react';
 import type { Metadata } from 'next';
-import { Phone, Mail, MapPin, Clock, Send, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
-import PageHeader from '@/components/shared/page-header';
-import { CONTACT, CONTACT_SUBJECTS } from '@/lib/constants';
+import { Suspense } from 'react';
+import Link from 'next/link';
+import { ArrowRight, Clock, ShieldCheck, MessageCircle } from 'lucide-react';
+import { PageHero } from '@/components/shared/page-hero';
+import { ContactForm } from '@/components/contact/contact-form';
+import { ContactChannels } from '@/components/contact/contact-channels';
+import { CONTACT } from '@/lib/constants';
 
-// Metadata must be in a separate layout or use generateMetadata in a server component
-// For client components, metadata is handled via the parent layout or a head.tsx file
+export const metadata: Metadata = {
+  title: 'Contato — Original Filter',
+  description:
+    'Fale com a Original Filter. Atendimento comercial, suporte técnico, ' +
+    'cross-reference, garantia e logística reversa. Cotia-SP, Brasil.',
+};
 
-interface FormData {
-  name: string;
-  email: string;
-  phone: string;
-  subject: string;
-  message: string;
-}
-
-interface FormErrors {
-  [key: string]: string;
-}
-
-const CONTACT_INFO = [
+const FAQ_ITEMS = [
   {
-    icon: Phone,
-    label: 'SAC (Ligação gratuita)',
-    value: CONTACT.sac,
-    href: `tel:${CONTACT.sac.replace(/\s/g, '')}`,
+    question: 'Em quanto tempo recebo uma resposta?',
+    answer:
+      'Nossa equipe responde solicitações em até 1 dia útil. Casos urgentes podem ser tratados pelo telefone +55 11 4613-3454 ou pelo SAC 0800 778 2000.',
   },
   {
-    icon: Phone,
-    label: 'Telefone',
-    value: CONTACT.phone,
-    href: `tel:${CONTACT.phone.replace(/\s/g, '')}`,
+    question: 'Como solicito o cross-reference de um filtro?',
+    answer:
+      'Use nossa ferramenta de cross-reference em /cross-reference. Digite o código do filtro de outra marca (Mann, Donaldson, Tecfil, etc.) e veremos a equivalência Original Filter. Se não encontrar, envie pelo formulário ao lado.',
   },
   {
-    icon: Mail,
-    label: 'E-mail',
-    value: CONTACT.email,
-    href: `mailto:${CONTACT.email}`,
+    question: 'Quero me tornar revendedor. Como faço?',
+    answer:
+      'Selecione "Programa de Revendedor" no assunto do formulário e descreva sua empresa. Nossa equipe comercial entrará em contato em até 2 dias úteis com as condições do programa.',
   },
   {
-    icon: MapPin,
-    label: 'Localização',
-    value: CONTACT.address,
-    href: null,
+    question: 'Como acionar a garantia de um filtro?',
+    answer:
+      'Selecione "Solicitação de Garantia" no assunto e informe o SKU do produto, data de aquisição e descrição da falha. Veja a política completa em /garantia.',
+  },
+  {
+    question: 'Vocês atendem todo o Brasil?',
+    answer:
+      'Sim. Operamos a partir de Cotia-SP com distribuição nacional via rede de revendedores e distribuidores autorizados. Para grandes volumes, atendimento direto da fábrica.',
   },
 ];
 
-function validateForm(data: FormData): FormErrors {
-  const errors: FormErrors = {};
-
-  if (!data.name.trim() || data.name.trim().length < 3) {
-    errors.name = 'Nome deve ter pelo menos 3 caracteres.';
-  }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(data.email)) {
-    errors.email = 'Insira um e-mail válido.';
-  }
-
-  if (data.phone && data.phone.replace(/\D/g, '').length < 10) {
-    errors.phone = 'Telefone deve ter pelo menos 10 dígitos.';
-  }
-
-  if (!data.subject) {
-    errors.subject = 'Selecione um assunto.';
-  }
-
-  if (!data.message.trim() || data.message.trim().length < 10) {
-    errors.message = 'Mensagem deve ter pelo menos 10 caracteres.';
-  }
-
-  return errors;
-}
-
 export default function ContatoPage() {
-  const [formData, setFormData] = useState<FormData>({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: '',
-  });
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-
-  function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
-  ) {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear error on change
-    if (errors[name]) {
-      setErrors((prev) => {
-        const next = { ...prev };
-        delete next[name];
-        return next;
-      });
-    }
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-
-    const validation = validateForm(formData);
-    if (Object.keys(validation).length > 0) {
-      setErrors(validation);
-      return;
-    }
-
-    setStatus('loading');
-    setErrors({});
-
-    try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) throw new Error('Erro ao enviar mensagem.');
-
-      setStatus('success');
-      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-    } catch {
-      setStatus('error');
-    }
-  }
-
   return (
     <>
-      <PageHeader
-        title="Contato"
-        subtitle="Queremos ouvir você! Envie suas dúvidas, elogios, sugestões ou solicite um orçamento."
-        breadcrumbs={[{ label: 'Contato' }]}
+      {/* ─── 1. Hero ─── */}
+      <PageHero
+        eyebrow="Fale conosco"
+        title="Equipe técnica à disposição."
+        description="Atendimento comercial, suporte técnico, cross-reference, garantia ou parcerias. Escolha o canal mais conveniente — respondemos rapidamente."
+        breadcrumbs={[{ label: 'Início', href: '/' }, { label: 'Contato' }]}
+        variant="dark"
+        size="md"
       />
 
-      <section className="py-16 md:py-24">
-        <div className="container-custom">
-          <div className="grid gap-12 lg:grid-cols-5">
-            {/* ── Formulário ── */}
-            <div className="lg:col-span-3">
-              <h2 className="font-heading text-dark text-2xl font-bold">Envie uma mensagem</h2>
-              <p className="text-muted-dark mt-2">
-                Preencha o formulário abaixo e retornaremos o mais breve possível.
-              </p>
+      {/* ─── 2. Big statement preto (telefone gigante) ─── */}
+      <section className="bg-brand-black relative overflow-hidden text-white">
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage:
+              'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
+            backgroundSize: '48px 48px',
+          }}
+        />
 
-              {/* Success state */}
-              {status === 'success' && (
-                <div className="bg-success/10 mt-6 flex items-start gap-3 rounded-xl p-4">
-                  <CheckCircle2 className="text-success mt-0.5 h-5 w-5 shrink-0" />
-                  <div>
-                    <p className="text-success font-semibold">Mensagem enviada!</p>
-                    <p className="text-success/80 mt-1 text-sm">
-                      Obrigado pelo contato. Retornaremos em até 48 horas úteis.
-                    </p>
-                  </div>
-                </div>
-              )}
+        <div className="relative mx-auto max-w-7xl px-4 py-10 md:px-12 md:py-14">
+          <div className="grid grid-cols-1 gap-px bg-white/5 md:grid-cols-3">
+            {/* Telefone */}
+            <a
+              href={`tel:${CONTACT.phoneRaw}`}
+              className="bg-brand-black hover:bg-brand-graphite group p-6 transition md:p-8"
+            >
+              <div className="text-brand-yellow mb-2 font-mono text-[10px] tracking-[0.22em] uppercase">
+                Atendimento comercial
+              </div>
+              <div
+                className="group-hover:text-brand-yellow font-mono font-bold tracking-tight text-white transition"
+                style={{
+                  fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+                  letterSpacing: '-0.02em',
+                }}
+              >
+                {CONTACT.phone}
+              </div>
+              <div className="mt-2 font-mono text-xs tracking-widest text-white/40 uppercase">
+                Seg–sex · 08h às 18h
+              </div>
+            </a>
 
-              {/* Error state */}
-              {status === 'error' && (
-                <div className="bg-danger/10 mt-6 flex items-start gap-3 rounded-xl p-4">
-                  <AlertCircle className="text-danger mt-0.5 h-5 w-5 shrink-0" />
-                  <div>
-                    <p className="text-danger font-semibold">Erro ao enviar</p>
-                    <p className="text-danger/80 mt-1 text-sm">
-                      Tente novamente ou entre em contato pelo SAC {CONTACT.sac}.
-                    </p>
-                  </div>
-                </div>
-              )}
+            {/* SAC */}
+            <a
+              href={`tel:${CONTACT.sacRaw}`}
+              className="bg-brand-black hover:bg-brand-graphite group p-6 transition md:p-8"
+            >
+              <div className="text-brand-yellow mb-2 font-mono text-[10px] tracking-[0.22em] uppercase">
+                SAC · gratuito
+              </div>
+              <div
+                className="group-hover:text-brand-yellow font-mono font-bold tracking-tight text-white transition"
+                style={{
+                  fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+                  letterSpacing: '-0.02em',
+                }}
+              >
+                {CONTACT.sac}
+              </div>
+              <div className="mt-2 font-mono text-xs tracking-widest text-white/40 uppercase">
+                Suporte ao consumidor
+              </div>
+            </a>
 
-              <div className="mt-8">
-                <div className="grid gap-5 sm:grid-cols-2">
-                  {/* Nome */}
-                  <div className="sm:col-span-2">
-                    <label htmlFor="name" className="text-dark block text-sm font-medium">
-                      Nome completo <span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      className={`text-dark placeholder:text-muted focus:border-brand focus:ring-brand/20 mt-1.5 w-full rounded-lg border bg-white px-4 py-3 text-sm transition-colors outline-none focus:ring-2 ${
-                        errors.name ? 'border-danger' : 'border-surface-alt'
-                      }`}
-                      placeholder="Seu nome completo"
-                    />
-                    {errors.name && <p className="text-danger mt-1 text-xs">{errors.name}</p>}
-                  </div>
+            {/* Email */}
+            <a
+              href={`mailto:${CONTACT.email}`}
+              className="bg-brand-black hover:bg-brand-graphite group p-6 transition md:p-8"
+            >
+              <div className="text-brand-yellow mb-2 font-mono text-[10px] tracking-[0.22em] uppercase">
+                Email institucional
+              </div>
+              <div
+                className="group-hover:text-brand-yellow font-mono font-bold tracking-tight break-all text-white transition"
+                style={{
+                  fontSize: 'clamp(1rem, 1.5vw, 1.25rem)',
+                  letterSpacing: '-0.01em',
+                }}
+              >
+                {CONTACT.email}
+              </div>
+              <div className="mt-2 font-mono text-xs tracking-widest text-white/40 uppercase">
+                Resposta em até 1 dia útil
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
 
-                  {/* Email */}
-                  <div>
-                    <label htmlFor="email" className="text-dark block text-sm font-medium">
-                      E-mail <span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className={`text-dark placeholder:text-muted focus:border-brand focus:ring-brand/20 mt-1.5 w-full rounded-lg border bg-white px-4 py-3 text-sm transition-colors outline-none focus:ring-2 ${
-                        errors.email ? 'border-danger' : 'border-surface-alt'
-                      }`}
-                      placeholder="seu@email.com"
-                    />
-                    {errors.email && <p className="text-danger mt-1 text-xs">{errors.email}</p>}
-                  </div>
+      {/* ─── 3. Layout principal: Formulário + Canais ─── */}
+      <section id="formulario" className="bg-brand-snow py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-12">
+          {/* Header */}
+          <div className="mb-10 max-w-3xl md:mb-12">
+            <div className="mb-4 flex items-center gap-3">
+              <MessageCircle className="text-brand-iron size-4" strokeWidth={2} />
+              <span className="text-brand-iron font-mono text-[11px] tracking-[0.25em] uppercase">
+                Envie sua mensagem
+              </span>
+            </div>
+            <h2
+              className="font-display text-brand-black leading-[0.95] font-black tracking-tight"
+              style={{
+                fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+                letterSpacing: '-0.035em',
+              }}
+            >
+              Como podemos
+              <br />
+              <span className="text-brand-yellow-deep">ajudar você?</span>
+            </h2>
+          </div>
 
-                  {/* Telefone */}
-                  <div>
-                    <label htmlFor="phone" className="text-dark block text-sm font-medium">
-                      Telefone
-                    </label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      className={`text-dark placeholder:text-muted focus:border-brand focus:ring-brand/20 mt-1.5 w-full rounded-lg border bg-white px-4 py-3 text-sm transition-colors outline-none focus:ring-2 ${
-                        errors.phone ? 'border-danger' : 'border-surface-alt'
-                      }`}
-                      placeholder="(11) 99999-9999"
-                    />
-                    {errors.phone && <p className="text-danger mt-1 text-xs">{errors.phone}</p>}
-                  </div>
-
-                  {/* Assunto */}
-                  <div className="sm:col-span-2">
-                    <label htmlFor="subject" className="text-dark block text-sm font-medium">
-                      Assunto <span className="text-danger">*</span>
-                    </label>
-                    <select
-                      id="subject"
-                      name="subject"
-                      value={formData.subject}
-                      onChange={handleChange}
-                      className={`text-dark focus:border-brand focus:ring-brand/20 mt-1.5 w-full rounded-lg border bg-white px-4 py-3 text-sm transition-colors outline-none focus:ring-2 ${
-                        errors.subject ? 'border-danger' : 'border-surface-alt'
-                      } ${!formData.subject ? 'text-muted' : ''}`}
-                    >
-                      <option value="">Selecione uma opção</option>
-                      {CONTACT_SUBJECTS.map((s) => (
-                        <option key={s.value} value={s.value}>
-                          {s.label}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.subject && <p className="text-danger mt-1 text-xs">{errors.subject}</p>}
-                  </div>
-
-                  {/* Mensagem */}
-                  <div className="sm:col-span-2">
-                    <label htmlFor="message" className="text-dark block text-sm font-medium">
-                      Mensagem <span className="text-danger">*</span>
-                    </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      value={formData.message}
-                      onChange={handleChange}
-                      rows={5}
-                      className={`text-dark placeholder:text-muted focus:border-brand focus:ring-brand/20 mt-1.5 w-full resize-none rounded-lg border bg-white px-4 py-3 text-sm transition-colors outline-none focus:ring-2 ${
-                        errors.message ? 'border-danger' : 'border-surface-alt'
-                      }`}
-                      placeholder="Descreva sua dúvida, sugestão ou solicitação..."
-                    />
-                    {errors.message && <p className="text-danger mt-1 text-xs">{errors.message}</p>}
-                  </div>
-                </div>
-
-                {/* Submit */}
-                <button
-                  type="button"
-                  onClick={handleSubmit}
-                  disabled={status === 'loading'}
-                  className="bg-brand text-dark hover:bg-brand-hover mt-6 inline-flex items-center gap-2 rounded-full px-8 py-3 text-sm font-semibold transition-colors disabled:opacity-60"
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
+            {/* Formulário (8 colunas) */}
+            <div className="lg:col-span-8">
+              <div
+                className="bg-brand-white border-brand-mist border p-6 md:p-10"
+                style={{ borderRadius: 'var(--radius-edge)' }}
+              >
+                <Suspense
+                  fallback={
+                    <div className="space-y-4">
+                      <div className="bg-brand-mist h-3 w-32 animate-pulse" />
+                      <div className="bg-brand-mist h-12 w-full animate-pulse" />
+                      <div className="bg-brand-mist h-3 w-32 animate-pulse" />
+                      <div className="bg-brand-mist h-12 w-full animate-pulse" />
+                      <div className="bg-brand-mist h-3 w-32 animate-pulse" />
+                      <div className="bg-brand-mist h-32 w-full animate-pulse" />
+                    </div>
+                  }
                 >
-                  {status === 'loading' ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Enviando...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="h-4 w-4" />
-                      Enviar Mensagem
-                    </>
-                  )}
-                </button>
+                  <ContactForm />
+                </Suspense>
               </div>
             </div>
 
-            {/* ── Sidebar: Info de Contato ── */}
-            <aside className="lg:col-span-2">
-              <div className="sticky top-24 space-y-6">
-                {/* Contact cards */}
-                <div className="border-surface-alt rounded-2xl border bg-white p-6">
-                  <h3 className="font-heading text-dark text-lg font-bold">
-                    Informações de contato
-                  </h3>
-                  <div className="mt-6 space-y-5">
-                    {CONTACT_INFO.map((item) => (
-                      <div key={item.label} className="flex gap-3">
-                        <div className="bg-brand/10 text-brand flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
-                          <item.icon className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <p className="text-muted text-xs font-medium tracking-wider uppercase">
-                            {item.label}
-                          </p>
-                          {item.href ? (
-                            <a
-                              href={item.href}
-                              className="text-dark hover:text-brand text-sm font-semibold transition-colors"
-                            >
-                              {item.value}
-                            </a>
-                          ) : (
-                            <p className="text-dark text-sm font-semibold">{item.value}</p>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+            {/* Canais diretos (4 colunas) */}
+            <div className="lg:col-span-4">
+              <div className="lg:sticky lg:top-32">
+                <div className="text-brand-iron mb-4 font-mono text-[10px] tracking-[0.22em] uppercase">
+                  Ou fale direto
                 </div>
-
-                {/* Horário */}
-                <div className="border-surface-alt rounded-2xl border bg-white p-6">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-brand/10 text-brand flex h-10 w-10 items-center justify-center rounded-lg">
-                      <Clock className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <p className="text-muted text-xs font-medium tracking-wider uppercase">
-                        Horário de Atendimento
-                      </p>
-                      <p className="text-dark text-sm font-semibold">Seg a Sex — 8h às 18h</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* WhatsApp CTA */}
-                <a
-                  href={CONTACT.whatsappLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-3 rounded-2xl bg-[#25D366] p-4 font-semibold text-white transition-opacity hover:opacity-90"
-                >
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                  </svg>
-                  Falar pelo WhatsApp
-                </a>
+                <ContactChannels />
               </div>
-            </aside>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 4. FAQ ─── */}
+      <section className="bg-brand-white border-brand-mist border-t py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-12">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-16">
+            <div className="lg:col-span-4">
+              <div className="lg:sticky lg:top-32">
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="bg-brand-yellow h-px w-8" />
+                  <span className="text-brand-iron font-mono text-[11px] tracking-[0.25em] uppercase">
+                    Perguntas frequentes
+                  </span>
+                </div>
+                <h2
+                  className="font-display text-brand-black leading-[0.95] font-black tracking-tight"
+                  style={{
+                    fontSize: 'clamp(1.875rem, 4vw, 3rem)',
+                    letterSpacing: '-0.035em',
+                  }}
+                >
+                  Dúvidas
+                  <br />
+                  <span className="text-brand-yellow-deep">comuns.</span>
+                </h2>
+                <p className="text-brand-iron mt-4 leading-relaxed">
+                  Antes de enviar uma mensagem, talvez a resposta esteja abaixo.
+                </p>
+              </div>
+            </div>
+
+            <div className="lg:col-span-8">
+              <div className="bg-brand-mist space-y-px">
+                {FAQ_ITEMS.map((item, i) => (
+                  <details
+                    key={item.question}
+                    className="group bg-brand-white hover:bg-brand-snow p-5 transition-colors md:p-6"
+                  >
+                    <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
+                      <div className="flex flex-1 items-start gap-3">
+                        <span className="text-brand-yellow-deep mt-1 shrink-0 font-mono text-[10px] tracking-widest uppercase">
+                          {String(i + 1).padStart(2, '0')}
+                        </span>
+                        <h3 className="font-display text-brand-black text-base leading-snug font-bold md:text-lg">
+                          {item.question}
+                        </h3>
+                      </div>
+                      <div className="text-brand-iron flex size-6 shrink-0 items-center justify-center transition-transform group-open:rotate-45">
+                        <span className="text-xl leading-none font-light">+</span>
+                      </div>
+                    </summary>
+                    <div className="text-brand-iron mt-4 pl-9 text-sm leading-relaxed md:text-base">
+                      {item.answer}
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 5. CTA institucional ─── */}
+      <section className="bg-brand-yellow relative overflow-hidden py-16 md:py-20">
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.06]"
+          style={{
+            backgroundImage:
+              'repeating-linear-gradient(135deg, transparent, transparent 16px, #000 16px, #000 17px)',
+          }}
+        />
+
+        <div className="relative mx-auto max-w-7xl px-4 md:px-12">
+          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2">
+            <div>
+              <div className="mb-4 flex items-center gap-3">
+                <ShieldCheck className="text-brand-black size-5" strokeWidth={2} />
+                <span className="text-brand-black/70 font-mono text-[11px] tracking-[0.25em] uppercase">
+                  Conheça mais
+                </span>
+              </div>
+              <h2
+                className="font-display text-brand-black leading-[0.95] font-black tracking-tight"
+                style={{
+                  fontSize: 'clamp(1.875rem, 4.5vw, 3rem)',
+                  letterSpacing: '-0.035em',
+                }}
+              >
+                Mais sobre
+                <br />a Original Filter.
+              </h2>
+              <p className="text-brand-black/80 mt-5 max-w-xl text-base md:text-lg">
+                Centro de Pesquisa e Desenvolvimento próprio em Cotia-SP, normas IATF 16949:2016, QS
+                9000, ISO 9001 e linha completa de 370+ produtos. Conheça nossos diferenciais.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3 lg:items-end">
+              <Link
+                href="/sobre"
+                className="bg-brand-black hover:bg-brand-graphite font-display inline-flex w-full items-center justify-center gap-2 px-6 py-3.5 text-sm font-semibold tracking-wide text-white uppercase transition lg:w-auto"
+                style={{ borderRadius: 'var(--radius-edge)' }}
+              >
+                Quem somos
+                <ArrowRight className="size-4" />
+              </Link>
+              <Link
+                href="/qualidade"
+                className="border-brand-black hover:bg-brand-black font-display inline-flex w-full items-center justify-center gap-2 border-2 px-6 py-3.5 text-sm font-semibold tracking-wide uppercase transition hover:text-white lg:w-auto"
+                style={{ borderRadius: 'var(--radius-edge)' }}
+              >
+                Política de qualidade
+                <ArrowRight className="size-4" />
+              </Link>
+              <Link
+                href="/produtos"
+                className="border-brand-black hover:bg-brand-black font-display inline-flex w-full items-center justify-center gap-2 border-2 px-6 py-3.5 text-sm font-semibold tracking-wide uppercase transition hover:text-white lg:w-auto"
+                style={{ borderRadius: 'var(--radius-edge)' }}
+              >
+                Catálogo completo
+                <ArrowRight className="size-4" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>

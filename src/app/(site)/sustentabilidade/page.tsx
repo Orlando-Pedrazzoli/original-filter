@@ -1,188 +1,233 @@
+/* ══════════════════════════════════════════
+   /sustentabilidade — Política de Sustentabilidade
+   ──────────────────────────────────────────
+   Server Component (SEO crítico).
+   Consolida /politica-de-sustentabilidade + /logistica-reversa do site original.
+
+   Estrutura (6 seções):
+   1. PageHero dark
+   2. Statement institucional + atalhos
+   3. SustainabilityPillars — 3 pilares
+   4. ReverseLogistics — processo + KPIs ambientais
+   5. PnrsCompliance — Lei 12.305 + Como participar
+   6. CTA final
+   ══════════════════════════════════════════ */
+
 import type { Metadata } from 'next';
-import { Leaf, Recycle, Package, TreePine, Droplets, Factory, Users, Trophy } from 'lucide-react';
-import PageHeader from '@/components/shared/page-header';
+import Link from 'next/link';
+import { ArrowRight, Leaf, ShieldCheck, Heart } from 'lucide-react';
+import { PageHero } from '@/components/shared/page-hero';
+import { SustainabilityPillars } from '@/components/sustainability/sustainability-pillars';
+import { ReverseLogistics } from '@/components/sustainability/reverse-logistics';
+import { PnrsCompliance } from '@/components/sustainability/pnrs-compliance';
 
 export const metadata: Metadata = {
-  title: 'Sustentabilidade | Original Filter',
+  title: 'Sustentabilidade & Logística Reversa — Original Filter',
   description:
-    'Conheça as práticas de sustentabilidade da Original Filter: logística reversa, embalagens sustentáveis, campanha Descarte Consciente e conformidade com a PNRS.',
-  openGraph: {
-    title: 'Sustentabilidade | Original Filter',
-    description:
-      'Logística reversa, embalagens sustentáveis e responsabilidade ambiental em cada filtro.',
-  },
+    'Compromisso da Original Filter com o futuro: três pilares de sustentabilidade ' +
+    '(ambiental, social e qualidade), sistema completo de logística reversa de ' +
+    'filtros usados e conformidade com a Política Nacional de Resíduos Sólidos ' +
+    '(Lei 12.305/2010).',
 };
-
-const PILLARS = [
-  {
-    icon: Leaf,
-    title: 'Ambiental',
-    items: [
-      'Logística reversa para coleta e reciclagem de filtros usados',
-      'Embalagens projetadas com materiais recicláveis e resistentes',
-      'Conformidade com a PNRS (Política Nacional de Resíduos Sólidos)',
-      'Campanha "Descarte Consciente" impressa em todas as embalagens',
-    ],
-  },
-  {
-    icon: Users,
-    title: 'Social',
-    items: [
-      'Geração de empregos diretos na região de Cotia/SP',
-      'Apoio a programas sociais e esportivos locais',
-      'Treinamento contínuo para colaboradores',
-      'Relacionamento ético com toda a cadeia produtiva',
-    ],
-  },
-  {
-    icon: Trophy,
-    title: 'Qualidade',
-    items: [
-      'Certificações IATF 16949, QS 9000 e ISO 9001',
-      'Processos de fabricação auditados regularmente',
-      'Testes laboratoriais em cada lote produzido',
-      'Melhoria contínua de produtos e processos',
-    ],
-  },
-];
-
-const REVERSE_LOGISTICS_STEPS = [
-  {
-    icon: Package,
-    step: '01',
-    title: 'Coleta',
-    text: 'Os filtros usados são coletados em pontos de descarte parceiros ou devolvidos por distribuidores e oficinas mecânicas.',
-  },
-  {
-    icon: Factory,
-    step: '02',
-    title: 'Triagem',
-    text: 'Os materiais são separados por tipo — metal, papel, borracha e elementos filtrantes — para destinação adequada.',
-  },
-  {
-    icon: Recycle,
-    step: '03',
-    title: 'Reciclagem',
-    text: 'Cada material segue para reciclagem especializada, reduzindo a extração de novos recursos naturais.',
-  },
-  {
-    icon: Droplets,
-    step: '04',
-    title: 'Resultado',
-    text: 'Menos resíduos em aterros, economia de recursos naturais e contribuição para um meio ambiente mais saudável.',
-  },
-];
 
 export default function SustentabilidadePage() {
   return (
     <>
-      <PageHeader
-        title="Sustentabilidade"
-        subtitle="Sustentabilidade é uma responsabilidade compartilhada. Conheça nossas práticas ambientais, sociais e de qualidade."
-        breadcrumbs={[{ label: 'A Empresa', href: '/sobre' }, { label: 'Sustentabilidade' }]}
+      {/* ─── 1. Hero ─── */}
+      <PageHero
+        eyebrow="Sustentabilidade & Meio Ambiente"
+        title="Compromisso com o futuro da filtragem."
+        description="Operações alinhadas com responsabilidade ambiental, social e legal. Da matéria-prima ao descarte: cada etapa do ciclo é pensada para minimizar impactos e gerar valor compartilhado."
+        breadcrumbs={[
+          { label: 'Início', href: '/' },
+          { label: 'Quem somos', href: '/sobre' },
+          { label: 'Sustentabilidade' },
+        ]}
+        variant="dark"
+        size="lg"
       />
 
-      {/* ── 3 Pilares ── */}
-      <section className="py-16 md:py-24">
-        <div className="container-custom">
-          <span className="text-brand-dark text-sm font-semibold tracking-widest uppercase">
-            Nossos Pilares
-          </span>
-          <h2 className="font-heading text-dark mt-2 text-2xl font-bold md:text-3xl">
-            Sustentabilidade em três dimensões
-          </h2>
+      {/* ─── 2. Statement institucional ─── */}
+      <section className="bg-brand-white py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-12">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-16">
+            {/* Lateral fixa */}
+            <div className="lg:col-span-4">
+              <div className="lg:sticky lg:top-32">
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="bg-brand-yellow h-px w-8" />
+                  <span className="text-brand-iron font-mono text-[11px] tracking-[0.25em] uppercase">
+                    Nossa posição
+                  </span>
+                </div>
+                <h2
+                  className="font-display text-brand-black leading-[0.95] font-black tracking-tight"
+                  style={{
+                    fontSize: 'clamp(1.875rem, 4vw, 3rem)',
+                    letterSpacing: '-0.035em',
+                  }}
+                >
+                  Sustentabilidade
+                  <br />
+                  <span className="text-brand-yellow-deep">como prática diária.</span>
+                </h2>
 
-          <div className="mt-12 grid gap-8 lg:grid-cols-3">
-            {PILLARS.map((pillar) => (
-              <div
-                key={pillar.title}
-                className="border-surface-alt hover:border-brand/30 hover:shadow-brand/5 rounded-2xl border p-8 transition-all hover:shadow-lg"
+                {/* Mini-stats institucionais */}
+                <div className="border-brand-mist mt-8 hidden flex-col gap-4 border-t pt-8 lg:flex">
+                  <MiniStat icon={<Leaf />} label="Pilares" value="03" />
+                  <MiniStat icon={<ShieldCheck />} label="Lei aplicada" value="12.305/2010" />
+                  <MiniStat icon={<Heart />} label="Responsabilidade" value="Compartilhada" />
+                </div>
+              </div>
+            </div>
+
+            {/* Texto principal */}
+            <div className="text-brand-iron space-y-6 text-base leading-relaxed md:text-lg lg:col-span-8">
+              <p>
+                Na <strong className="text-brand-black">Original Filter</strong>, a sustentabilidade
+                não é uma palavra de marketing — é um princípio operacional. Cada etapa da nossa
+                cadeia produtiva, do projeto à pós-venda, é avaliada sob a ótica do impacto
+                ambiental, social e da durabilidade dos componentes.
+              </p>
+
+              <p>
+                Nossa atuação se sustenta em{' '}
+                <strong className="text-brand-black">três pilares integrados</strong>:
+                sustentabilidade ambiental nos processos produtivos, responsabilidade social com
+                colaboradores e comunidade, e qualidade consciente que prolonga a vida útil dos
+                equipamentos dos nossos clientes.
+              </p>
+
+              <p>
+                Além disso, operamos um{' '}
+                <strong className="text-brand-black">sistema completo de logística reversa</strong>{' '}
+                que devolve filtros usados ao ciclo produtivo. Não é apenas cumprimento legal — é a
+                forma como entendemos nosso papel na indústria automotiva e industrial.
+              </p>
+
+              <p className="font-display text-brand-black text-lg font-semibold md:text-xl">
+                Fazer bem-feito, com responsabilidade. É assim que entregamos qualidade superior em
+                filtros e sensores há anos.
+              </p>
+
+              {/* Atalhos âncora */}
+              <div className="flex flex-wrap gap-2 pt-4">
+                <Link
+                  href="#pilares"
+                  className="text-brand-iron border-brand-mist hover:border-brand-black hover:text-brand-black inline-flex items-center gap-1.5 border px-3 py-1.5 font-mono text-xs tracking-widest uppercase transition"
+                  style={{ borderRadius: 'var(--radius-edge)' }}
+                >
+                  ↓ 3 pilares
+                </Link>
+                <Link
+                  href="#logistica"
+                  className="text-brand-iron border-brand-mist hover:border-brand-black hover:text-brand-black inline-flex items-center gap-1.5 border px-3 py-1.5 font-mono text-xs tracking-widest uppercase transition"
+                  style={{ borderRadius: 'var(--radius-edge)' }}
+                >
+                  ↓ Logística reversa
+                </Link>
+                <Link
+                  href="#pnrs"
+                  className="text-brand-iron border-brand-mist hover:border-brand-black hover:text-brand-black inline-flex items-center gap-1.5 border px-3 py-1.5 font-mono text-xs tracking-widest uppercase transition"
+                  style={{ borderRadius: 'var(--radius-edge)' }}
+                >
+                  ↓ Conformidade PNRS
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 3. Pilares ─── */}
+      <div id="pilares">
+        <SustainabilityPillars />
+      </div>
+
+      {/* ─── 4. Logística Reversa ─── */}
+      <div id="logistica">
+        <ReverseLogistics />
+      </div>
+
+      {/* ─── 5. PNRS + Como Participar ─── */}
+      <div id="pnrs">
+        <PnrsCompliance />
+      </div>
+
+      {/* ─── 6. CTA final ─── */}
+      <section className="bg-brand-snow border-brand-mist border-t py-16 md:py-20">
+        <div className="mx-auto max-w-7xl px-4 md:px-12">
+          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2">
+            <div>
+              <div className="mb-4 flex items-center gap-3">
+                <div className="bg-brand-yellow h-px w-8" />
+                <span className="text-brand-iron font-mono text-[11px] tracking-[0.25em] uppercase">
+                  Continue conhecendo
+                </span>
+              </div>
+              <h2
+                className="font-display text-brand-black leading-[0.95] font-black tracking-tight"
+                style={{
+                  fontSize: 'clamp(1.875rem, 4.5vw, 3rem)',
+                  letterSpacing: '-0.035em',
+                }}
               >
-                <div className="bg-brand/10 text-brand flex h-12 w-12 items-center justify-center rounded-xl">
-                  <pillar.icon className="h-6 w-6" />
-                </div>
-                <h3 className="font-heading text-dark mt-4 text-xl font-bold">{pillar.title}</h3>
-                <ul className="mt-4 space-y-3">
-                  {pillar.items.map((item, i) => (
-                    <li key={i} className="text-muted-dark flex gap-3 text-sm leading-relaxed">
-                      <span className="bg-brand mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+                Aprofunde-se em
+                <br />
+                <span className="text-brand-yellow-deep">qualidade e garantia.</span>
+              </h2>
+              <p className="text-brand-iron mt-5 max-w-xl text-base md:text-lg">
+                Sustentabilidade caminha junto com qualidade. Conheça os processos auditados da
+                Original Filter e nossa política de garantia.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3 lg:items-end">
+              <Link
+                href="/qualidade"
+                className="bg-brand-black hover:bg-brand-graphite font-display inline-flex w-full items-center justify-center gap-2 px-6 py-3.5 text-sm font-semibold tracking-wide text-white uppercase transition lg:w-auto"
+                style={{ borderRadius: 'var(--radius-edge)' }}
+              >
+                Política de qualidade
+                <ArrowRight className="size-4" />
+              </Link>
+              <Link
+                href="/garantia"
+                className="border-brand-black hover:bg-brand-black font-display inline-flex w-full items-center justify-center gap-2 border-2 px-6 py-3.5 text-sm font-semibold tracking-wide uppercase transition hover:text-white lg:w-auto"
+                style={{ borderRadius: 'var(--radius-edge)' }}
+              >
+                Política de garantia
+                <ArrowRight className="size-4" />
+              </Link>
+              <Link
+                href="/contato"
+                className="border-brand-black hover:bg-brand-black font-display inline-flex w-full items-center justify-center gap-2 border-2 px-6 py-3.5 text-sm font-semibold tracking-wide uppercase transition hover:text-white lg:w-auto"
+                style={{ borderRadius: 'var(--radius-edge)' }}
+              >
+                Falar com a equipe
+                <ArrowRight className="size-4" />
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
-
-      {/* ── Logística Reversa ── */}
-      <section className="bg-dark py-16 md:py-24">
-        <div className="container-custom">
-          <div className="mx-auto max-w-3xl text-center">
-            <span className="text-brand text-sm font-semibold tracking-widest uppercase">
-              Logística Reversa
-            </span>
-            <h2 className="font-heading mt-2 text-2xl font-bold text-white md:text-3xl">
-              Do uso ao reaproveitamento
-            </h2>
-            <p className="text-muted mt-4">
-              Nosso programa de logística reversa dá o destino correto a cada filtro usado, evitando
-              danos à natureza e promovendo a economia circular.
-            </p>
-          </div>
-
-          <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {REVERSE_LOGISTICS_STEPS.map((item) => (
-              <div key={item.step} className="text-center">
-                <div className="bg-brand text-dark mx-auto flex h-16 w-16 items-center justify-center rounded-2xl">
-                  <item.icon className="h-7 w-7" />
-                </div>
-                <p className="font-heading text-brand mt-4 text-xs font-bold tracking-widest uppercase">
-                  Passo {item.step}
-                </p>
-                <h3 className="font-heading mt-1 text-lg font-bold text-white">{item.title}</h3>
-                <p className="text-muted mt-2 text-sm leading-relaxed">{item.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Descarte Consciente Banner ── */}
-      <section className="bg-brand relative overflow-hidden py-12 md:py-16">
-        <div
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage:
-              'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.3) 1px, transparent 0)',
-            backgroundSize: '20px 20px',
-          }}
-        />
-        <div className="container-custom relative z-10 text-center">
-          <TreePine className="text-dark mx-auto h-10 w-10" />
-          <h2 className="font-heading text-dark mt-4 text-2xl font-bold md:text-3xl">
-            Campanha Descarte Consciente
-          </h2>
-          <p className="text-dark/80 mx-auto mt-3 max-w-xl">
-            Todas as embalagens Original Filter trazem orientações sobre o descarte correto de
-            filtros usados. Juntos, protegemos o meio ambiente e promovemos a sustentabilidade.
-          </p>
-        </div>
-      </section>
-
-      {/* ── CTA ── */}
-      <section className="bg-surface py-12">
-        <div className="container-custom text-center">
-          <p className="text-muted-dark">Quer saber mais sobre nossas práticas sustentáveis?</p>
-          <a
-            href="/contato"
-            className="bg-dark hover:bg-dark-soft mt-3 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white transition-colors"
-          >
-            Fale Conosco
-          </a>
         </div>
       </section>
     </>
+  );
+}
+
+// ─── MiniStat (sidebar) ───
+function MiniStat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+  return (
+    <div className="flex items-center gap-3">
+      <div className="bg-brand-snow text-brand-yellow-deep flex size-8 shrink-0 items-center justify-center [&>svg]:size-4">
+        {icon}
+      </div>
+      <div className="min-w-0">
+        <div className="text-brand-iron font-mono text-[10px] tracking-[0.22em] uppercase">
+          {label}
+        </div>
+        <div className="font-display text-brand-black text-sm font-bold">{value}</div>
+      </div>
+    </div>
   );
 }

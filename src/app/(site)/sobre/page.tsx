@@ -1,256 +1,251 @@
+/* ══════════════════════════════════════════
+   /sobre — Quem Somos Original Filter
+   ──────────────────────────────────────────
+   Server Component (SEO importante).
+   Conteúdo modernizado preservando os fatos do site original.
+
+   Estrutura:
+   1. PageHero dark com slogan oficial
+   2. "Quem Somos" — texto institucional modernizado
+   3. Stats institucionais (catálogo, marcas, normas)
+   4. AboutPillars — Missão / Visão / Valores
+   5. AboutCertifications — IATF / QS / ISO
+   6. AboutLocation — Cotia-SP + contatos diretos
+   7. CTAs finais
+   ══════════════════════════════════════════ */
+
 import type { Metadata } from 'next';
-import Image from 'next/image';
-import { Factory, Target, Eye, Heart, Award, Users, Globe, TrendingUp } from 'lucide-react';
-import PageHeader from '@/components/shared/page-header';
-import { CERTIFICATIONS } from '@/lib/constants';
+import Link from 'next/link';
+import { ArrowRight, FlaskConical, Globe, Wrench } from 'lucide-react';
+import { PageHero } from '@/components/shared/page-hero';
+import { AboutPillars } from '@/components/about/about-pillars';
+import { AboutCertifications } from '@/components/about/about-certifications';
+import { AboutLocation } from '@/components/about/about-location';
 
 export const metadata: Metadata = {
-  title: 'Sobre Nós | Original Filter',
+  title: 'Quem Somos — Original Filter',
   description:
-    'Conheça a Original Filter — fabricante brasileira de filtros automotivos, agrícolas e industriais localizada em Cotia/SP. Certificações IATF 16949, QS 9000 e ISO 9001.',
-  openGraph: {
-    title: 'Sobre Nós | Original Filter',
-    description: 'Fabricante brasileira de filtros com certificações internacionais de qualidade.',
-  },
+    'A Original Filter é especialista em filtros automotivos, agrícolas, ' +
+    'industriais e fora-de-estrada. Centro de Pesquisa & Desenvolvimento ' +
+    'próprio em Cotia-SP. Normas IATF 16949:2016, QS 9000 e ISO 9001.',
 };
-
-const VALUES = [
-  {
-    icon: Award,
-    title: 'Excelência',
-    text: 'Cada filtro produzido passa por rigorosos testes de vazão, eficiência de filtragem, resistência à pressão e durabilidade.',
-  },
-  {
-    icon: Users,
-    title: 'Compromisso',
-    text: 'Construímos relacionamentos sólidos e duradouros com clientes, distribuidores e parceiros em todo o Brasil.',
-  },
-  {
-    icon: Globe,
-    title: 'Sustentabilidade',
-    text: 'Adotamos logística reversa e embalagens sustentáveis para minimizar o impacto ambiental da nossa operação.',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Inovação',
-    text: 'Investimento contínuo em tecnologia de fabricação e laboratórios avançados para desenvolver produtos de alta performance.',
-  },
-];
-
-const MILESTONES = [
-  {
-    year: 'Fundação',
-    text: 'Início das operações em Cotia/SP, com foco em filtros para a linha de transporte pesado.',
-  },
-  {
-    year: '2014',
-    text: 'Lançamento do catálogo completo para utilitários, vans, ônibus e caminhões com mais de 480 produtos.',
-  },
-  {
-    year: '2017',
-    text: 'Investimento de R$ 1,5 milhão na expansão da fábrica, gerando 50 novos postos de trabalho.',
-  },
-  {
-    year: 'Hoje',
-    text: 'Linha completa para transporte, agrícola, máquinas e equipamentos com certificações internacionais.',
-  },
-];
 
 export default function SobrePage() {
   return (
     <>
-      <PageHeader
-        title="Sobre a Original Filter"
-        subtitle="Fabricante brasileira de filtros automotivos, agrícolas e industriais com certificações internacionais de qualidade."
-        breadcrumbs={[{ label: 'A Empresa', href: '/sobre' }, { label: 'Sobre Nós' }]}
+      {/* ─── 1. Hero ─── */}
+      <PageHero
+        eyebrow="Quem somos"
+        title="Qualidade Superior em Filtros Automotivos e Sensores."
+        description="Há anos a Original Filter se consolida como referência nacional na fabricação de filtros para frotas pesadas, máquinas agrícolas, equipamentos industriais e veículos fora-de-estrada."
+        breadcrumbs={[{ label: 'Início', href: '/' }, { label: 'Quem somos' }]}
+        variant="dark"
+        size="lg"
       />
 
-      {/* ── Quem Somos ── */}
-      <section className="py-16 md:py-24">
-        <div className="container-custom">
-          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+      {/* ─── 2. Quem Somos ─── */}
+      <section className="bg-brand-white py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 md:px-12">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-16">
+            {/* Eyebrow + título à esquerda */}
+            <div className="lg:col-span-4">
+              <div className="lg:sticky lg:top-32">
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="bg-brand-yellow h-px w-8" />
+                  <span className="text-brand-iron font-mono text-[11px] tracking-[0.25em] uppercase">
+                    Nossa história
+                  </span>
+                </div>
+                <h2
+                  className="font-display text-brand-black leading-[0.95] font-black tracking-tight"
+                  style={{
+                    fontSize: 'clamp(1.875rem, 4vw, 3rem)',
+                    letterSpacing: '-0.035em',
+                  }}
+                >
+                  Especialistas em
+                  <br />
+                  <span className="text-brand-yellow-deep">filtragem.</span>
+                </h2>
+              </div>
+            </div>
+
+            {/* Texto à direita */}
+            <div className="text-brand-iron space-y-6 text-base leading-relaxed md:text-lg lg:col-span-8">
+              <p>
+                A <strong className="text-brand-black">Original Filter</strong> destaca-se no
+                mercado brasileiro de autopeças como especialista em filtros automotivos, agrícolas,
+                industriais e fora-de-estrada. Nossa linha completa de reposição é projetada para
+                atender e superar as expectativas dos mais exigentes fabricantes mundiais de
+                veículos.
+              </p>
+
+              <p>
+                Nosso{' '}
+                <strong className="text-brand-black">Centro de Pesquisa e Desenvolvimento</strong>{' '}
+                está sempre alinhado com as inovações do mercado. Cada filtro passa por testes
+                rigorosos em laboratórios avançados, conduzidos por uma equipe técnica altamente
+                qualificada, garantindo excelência tanto no mercado nacional quanto internacional.
+              </p>
+
+              <p>
+                Localizadas em <strong className="text-brand-black">Cotia, São Paulo</strong>,
+                nossas instalações estratégicas, próximas às principais vias de acesso, viabilizam
+                uma distribuição eficiente em todo o território nacional. Um estoque robusto garante
+                atendimento ágil, qualidade competitiva e prazos seguros — atributos essenciais para
+                distribuidores, oficinas e frotistas.
+              </p>
+
+              <p className="font-display text-brand-black text-lg font-semibold md:text-xl">
+                Escolha a Original Filter para negócios de sucesso e a certeza de adquirir produtos
+                que elevam a performance da sua frota.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 3. Stats institucionais ─── */}
+      <section className="bg-brand-snow border-brand-mist border-y py-16 md:py-20">
+        <div className="mx-auto max-w-7xl px-4 md:px-12">
+          <div className="bg-brand-mist grid grid-cols-2 gap-px md:grid-cols-4">
+            <StatBlock
+              icon={<FlaskConical className="size-6" strokeWidth={1.5} />}
+              eyebrow="P&D próprio"
+              value="100%"
+              label="Centro de Pesquisa e Desenvolvimento interno"
+            />
+            <StatBlock
+              icon={<Wrench className="size-6" strokeWidth={1.5} />}
+              eyebrow="Linha completa"
+              value="370+"
+              label="Filtros e sensores no catálogo ativo"
+            />
+            <StatBlock
+              icon={<Globe className="size-6" strokeWidth={1.5} />}
+              eyebrow="Cobertura"
+              value="22"
+              label="Montadoras atendidas no Brasil e exterior"
+            />
+            <StatBlock
+              icon={<FlaskConical className="size-6" strokeWidth={1.5} />}
+              eyebrow="Auditoria"
+              value="3"
+              label="Normas internacionais seguidas"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 4. Pilares ─── */}
+      <AboutPillars />
+
+      {/* ─── 5. Certificações ─── */}
+      <AboutCertifications />
+
+      {/* ─── 6. Localização ─── */}
+      <AboutLocation />
+
+      {/* ─── 7. CTAs finais ─── */}
+      <section className="bg-brand-yellow relative overflow-hidden py-16 md:py-20">
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.06]"
+          style={{
+            backgroundImage:
+              'repeating-linear-gradient(135deg, transparent, transparent 16px, #000 16px, #000 17px)',
+          }}
+        />
+
+        <div className="relative mx-auto max-w-7xl px-4 md:px-12">
+          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2">
             <div>
-              <span className="text-brand-dark text-sm font-semibold tracking-widest uppercase">
-                Quem Somos
-              </span>
-              <h2 className="font-heading text-dark mt-2 text-2xl font-bold md:text-3xl">
-                Qualidade que protege o seu motor
-              </h2>
-              <div className="text-muted-dark mt-6 space-y-4 leading-relaxed">
-                <p>
-                  A Original Filter é uma empresa brasileira especializada na fabricação de filtros
-                  para os segmentos de transporte pesado, agrícola, máquinas, equipamentos e
-                  fora-de-estrada. Com sede em Cotia, São Paulo, a empresa se consolidou como
-                  referência no mercado de reposição.
-                </p>
-                <p>
-                  Em 2017, a empresa investiu R$ 1,5 milhão para expandir e nacionalizar a produção,
-                  gerando 50 postos de trabalho com o apoio da Investe SP. Esse compromisso com o
-                  crescimento sustentável se reflete na qualidade de cada filtro produzido.
-                </p>
-                <p>
-                  Os produtos são distribuídos comercialmente pela Del Rey Filtros, garantindo
-                  cobertura nacional e agilidade na entrega para distribuidores e mecânicas em todo
-                  o Brasil.
-                </p>
+              <div className="mb-4 flex items-center gap-3">
+                <div className="bg-brand-black h-px w-8" />
+                <span className="text-brand-black/70 font-mono text-[11px] tracking-[0.25em] uppercase">
+                  Aprofunde-se
+                </span>
               </div>
-            </div>
-
-            {/* Image placeholder / Certifications block */}
-            <div className="relative">
-              <div className="bg-surface overflow-hidden rounded-2xl p-8 md:p-12">
-                <div className="text-dark flex items-center gap-3">
-                  <Factory className="text-brand h-8 w-8" />
-                  <span className="font-heading text-xl font-bold">Cotia, São Paulo</span>
-                </div>
-                <p className="text-muted-dark mt-3 text-sm">
-                  Unidade fabril com processos padronizados e auditados regularmente
-                </p>
-
-                {/* Certifications */}
-                <div className="border-surface-alt mt-8 border-t pt-8">
-                  <p className="text-muted text-xs font-semibold tracking-widest uppercase">
-                    Certificações
-                  </p>
-                  <div className="mt-4 flex flex-wrap gap-3">
-                    {CERTIFICATIONS.map((cert) => (
-                      <span
-                        key={cert}
-                        className="border-brand/30 bg-brand/10 text-dark rounded-full border px-4 py-2 text-sm font-semibold"
-                      >
-                        {cert}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Stats */}
-                <div className="border-surface-alt mt-8 grid grid-cols-3 gap-4 border-t pt-8">
-                  <div>
-                    <p className="font-heading text-brand text-2xl font-bold">770+</p>
-                    <p className="text-muted-dark text-xs">Produtos</p>
-                  </div>
-                  <div>
-                    <p className="font-heading text-brand text-2xl font-bold">9</p>
-                    <p className="text-muted-dark text-xs">Montadoras</p>
-                  </div>
-                  <div>
-                    <p className="font-heading text-brand text-2xl font-bold">20+</p>
-                    <p className="text-muted-dark text-xs">Tipos de filtro</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Decorative accent */}
-              <div className="bg-brand/20 absolute -right-4 -bottom-4 -z-10 h-full w-full rounded-2xl" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Missão / Visão / Valores ── */}
-      <section className="bg-dark py-16 md:py-24">
-        <div className="container-custom">
-          <div className="grid gap-8 md:grid-cols-3">
-            {/* Missão */}
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-8">
-              <div className="bg-brand flex h-12 w-12 items-center justify-center rounded-xl">
-                <Target className="text-dark h-6 w-6" />
-              </div>
-              <h3 className="font-heading mt-4 text-xl font-bold text-white">Missão</h3>
-              <p className="text-muted mt-3 leading-relaxed">
-                Produzir filtros automotivos, agrícolas e industriais de alta qualidade, garantindo
-                proteção eficiente para motores e equipamentos de nossos clientes.
-              </p>
-            </div>
-
-            {/* Visão */}
-            <div className="border-brand/20 bg-brand/5 rounded-2xl border p-8">
-              <div className="bg-brand flex h-12 w-12 items-center justify-center rounded-xl">
-                <Eye className="text-dark h-6 w-6" />
-              </div>
-              <h3 className="font-heading mt-4 text-xl font-bold text-white">Visão</h3>
-              <p className="text-muted mt-3 leading-relaxed">
-                Ser reconhecida como referência nacional em filtros de reposição, expandindo para
-                novos segmentos e mercados internacionais com excelência e inovação.
-              </p>
-            </div>
-
-            {/* Valores */}
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-8">
-              <div className="bg-brand flex h-12 w-12 items-center justify-center rounded-xl">
-                <Heart className="text-dark h-6 w-6" />
-              </div>
-              <h3 className="font-heading mt-4 text-xl font-bold text-white">Valores</h3>
-              <p className="text-muted mt-3 leading-relaxed">
-                Integridade, qualidade sem compromisso, respeito ao meio ambiente, valorização das
-                pessoas e compromisso com a satisfação do cliente.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Nossos Valores em Detalhe ── */}
-      <section className="py-16 md:py-24">
-        <div className="container-custom">
-          <span className="text-brand-dark text-sm font-semibold tracking-widest uppercase">
-            O que nos move
-          </span>
-          <h2 className="font-heading text-dark mt-2 text-2xl font-bold md:text-3xl">
-            Pilares que sustentam a nossa marca
-          </h2>
-
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {VALUES.map((value) => (
-              <div
-                key={value.title}
-                className="group border-surface-alt hover:border-brand/30 hover:shadow-brand/5 rounded-2xl border p-6 transition-all hover:shadow-lg"
+              <h2
+                className="font-display text-brand-black leading-[0.95] font-black tracking-tight"
+                style={{
+                  fontSize: 'clamp(1.875rem, 4.5vw, 3rem)',
+                  letterSpacing: '-0.035em',
+                }}
               >
-                <div className="bg-brand/10 text-brand group-hover:bg-brand group-hover:text-dark flex h-11 w-11 items-center justify-center rounded-lg transition-colors">
-                  <value.icon className="h-5 w-5" />
-                </div>
-                <h3 className="font-heading text-dark mt-4 text-lg font-semibold">{value.title}</h3>
-                <p className="text-muted-dark mt-2 text-sm leading-relaxed">{value.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+                Conheça nossa
+                <br />
+                política completa.
+              </h2>
+              <p className="text-brand-black/80 mt-5 max-w-xl text-base md:text-lg">
+                Detalhamos os processos de qualidade, compromissos ambientais e as condições de
+                garantia que regem cada filtro Original Filter produzido.
+              </p>
+            </div>
 
-      {/* ── Trajetória ── */}
-      <section className="bg-surface py-16 md:py-24">
-        <div className="container-custom">
-          <span className="text-brand-dark text-sm font-semibold tracking-widest uppercase">
-            Nossa Trajetória
-          </span>
-          <h2 className="font-heading text-dark mt-2 text-2xl font-bold md:text-3xl">
-            Marcos importantes
-          </h2>
-
-          <div className="mt-12 space-y-0">
-            {MILESTONES.map((item, i) => (
-              <div key={i} className="flex gap-6 pb-10 last:pb-0">
-                {/* Timeline */}
-                <div className="flex flex-col items-center">
-                  <div className="bg-brand text-dark flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xs font-bold">
-                    {i + 1}
-                  </div>
-                  {i < MILESTONES.length - 1 && <div className="bg-brand/30 mt-2 w-px flex-1" />}
-                </div>
-
-                {/* Content */}
-                <div className="pb-2">
-                  <p className="font-heading text-brand-dark text-sm font-bold tracking-wider uppercase">
-                    {item.year}
-                  </p>
-                  <p className="text-muted-dark mt-1 leading-relaxed">{item.text}</p>
-                </div>
-              </div>
-            ))}
+            <div className="flex flex-col gap-3 lg:items-end">
+              <Link
+                href="/qualidade"
+                className="bg-brand-black hover:bg-brand-graphite font-display inline-flex w-full items-center justify-center gap-2 px-6 py-3.5 text-sm font-semibold tracking-wide text-white uppercase transition lg:w-auto"
+                style={{ borderRadius: 'var(--radius-edge)' }}
+              >
+                Política de qualidade
+                <ArrowRight className="size-4" />
+              </Link>
+              <Link
+                href="/sustentabilidade"
+                className="border-brand-black hover:bg-brand-black font-display inline-flex w-full items-center justify-center gap-2 border-2 px-6 py-3.5 text-sm font-semibold tracking-wide uppercase transition hover:text-white lg:w-auto"
+                style={{ borderRadius: 'var(--radius-edge)' }}
+              >
+                Sustentabilidade
+                <ArrowRight className="size-4" />
+              </Link>
+              <Link
+                href="/contato"
+                className="border-brand-black hover:bg-brand-black font-display inline-flex w-full items-center justify-center gap-2 border-2 px-6 py-3.5 text-sm font-semibold tracking-wide uppercase transition hover:text-white lg:w-auto"
+                style={{ borderRadius: 'var(--radius-edge)' }}
+              >
+                Falar com a equipe
+                <ArrowRight className="size-4" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
     </>
+  );
+}
+
+// ─── Stat block reusável ───
+function StatBlock({
+  icon,
+  eyebrow,
+  value,
+  label,
+}: {
+  icon: React.ReactNode;
+  eyebrow: string;
+  value: string;
+  label: string;
+}) {
+  return (
+    <div className="bg-brand-snow relative p-6 md:p-8">
+      <div className="bg-brand-yellow absolute top-6 bottom-6 left-0 w-0.5 md:top-8 md:bottom-8" />
+      <div className="pl-4">
+        <div className="text-brand-iron mb-3">{icon}</div>
+        <div className="text-brand-iron mb-2 font-mono text-[10px] tracking-[0.22em] uppercase">
+          {eyebrow}
+        </div>
+        <div
+          className="font-display text-brand-black mb-3 leading-none font-black"
+          style={{
+            fontSize: 'clamp(2rem, 4vw, 3rem)',
+            letterSpacing: '-0.04em',
+          }}
+        >
+          {value}
+        </div>
+        <div className="text-brand-steel text-xs leading-relaxed md:text-sm">{label}</div>
+      </div>
+    </div>
   );
 }

@@ -1,139 +1,102 @@
-/**
- * Seed script — Create the first admin user
- *
- * Usage: npx tsx scripts/seed-admin.ts
- *
- * Environment variables (set in .env.local):
- *   MONGODB_URI        — MongoDB connection string (required)
- *   ADMIN_EMAIL        — Admin email (optional, default: admin@originalfilter.com)
- *   ADMIN_PASSWORD     — Admin password (optional, default: OriginalFilter@2026)
- *   ADMIN_NAME         — Admin name (optional, default: Admin Original Filter)
- */
+/* ══════════════════════════════════════════
+   Script: seed-admin
+   ══════════════════════════════════════════
+   Cria ou atualiza o usuário admin do painel.
 
+   USO:
+   1. Adicionar no .env.local:
+      ADMIN_EMAIL=orlando@originalfilter.com
+      ADMIN_PASSWORD=SuaSenhaSegura123
+      ADMIN_NAME=Orlando Pedrazzoli   (opcional)
+
+   2. Rodar:
+      npx tsx scripts/seed-admin.ts
+
+   Se o email já existir, ATUALIZA a senha + garante role=admin + isActive=true.
+   Se não existir, CRIA novo admin.
+
+   Após criar, REMOVA ADMIN_PASSWORD do .env.local por segurança.
+   ══════════════════════════════════════════ */
+
+import dotenv from 'dotenv';
+import path from 'path';
 import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
-import { readFileSync } from 'fs';
-import { resolve } from 'path';
+import User from '../src/models/User';
 
-// ── Load .env.local manually (no dotenv needed) ──
-function loadEnvLocal() {
-  try {
-    const envPath = resolve(process.cwd(), '.env.local');
-    const content = readFileSync(envPath, 'utf-8');
-    for (const line of content.split('\n')) {
-      const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith('#')) continue;
-      const eqIndex = trimmed.indexOf('=');
-      if (eqIndex === -1) continue;
-      const key = trimmed.slice(0, eqIndex).trim();
-      let value = trimmed.slice(eqIndex + 1).trim();
-      if (
-        (value.startsWith('"') && value.endsWith('"')) ||
-        (value.startsWith("'") && value.endsWith("'"))
-      ) {
-        value = value.slice(1, -1);
-      }
-      if (!process.env[key]) {
-        process.env[key] = value;
-      }
-    }
-  } catch {
-    // .env.local not found
-  }
-}
+// Carregar .env.local explicitamente (Next.js carrega automaticamente,
+// mas scripts standalone via tsx não)
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 
-loadEnvLocal();
+async function main() {
+  const email = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
+  const name = process.env.ADMIN_NAME || 'Administrador';
+  const phone = process.env.ADMIN_PHONE || '+5511000000000';
 
-// ── User Schema (inline to avoid path alias issues in scripts) ──
-const UserSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true, trim: true },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-      lowercase: true,
-    },
-    password: { type: String, required: true, select: false },
-    role: { type: String, enum: ['admin', 'customer'], default: 'customer' },
-    image: { type: String, default: '' },
-    isActive: { type: Boolean, default: true },
-    lastLogin: { type: Date },
-  },
-  { timestamps: true },
-);
-
-// Mongoose 9: async pre-save without next()
-UserSchema.pre('save', async function () {
-  if (!this.isModified('password')) return;
-  const salt = await bcrypt.genSalt(12);
-  this.password = await bcrypt.hash(this.password, salt);
-});
-
-const User = mongoose.models.User || mongoose.model('User', UserSchema);
-
-// ── Main ──
-async function seedAdmin() {
-  const uri = process.env.MONGODB_URI;
-
-  if (!uri) {
-    console.error('');
-    console.error('❌ MONGODB_URI não encontrada!');
-    console.error('   Verifica o teu .env.local');
-    console.error('');
+  if (!email || !password) {
+    console.error('❌ ADMIN_EMAIL e ADMIN_PASSWORD são obrigatórios no .env.local');
     process.exit(1);
   }
 
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@originalfilter.com';
-  const adminPassword = process.env.ADMIN_PASSWORD || 'OriginalFilter@2026';
-  const adminName = process.env.ADMIN_NAME || 'Admin Original Filter';
+  if (password.length < 8) {
+    console.error('❌ ADMIN_PASSWORD deve ter pelo menos 8 caracteres');
+    process.exit(1);
+  }
 
-  try {
-    console.log('');
-    console.log('🔌 Conectando ao MongoDB...');
-    await mongoose.connect(uri);
-    console.log('✅ Conectado!');
+  const mongoUri = process.env.MONGODB_URI;
+  if (!mongoUri) {
+    console.error('❌ MONGODB_URI não configurado no .env.local');
+    process.exit(1);
+  }
 
-    const existing = await User.findOne({ email: adminEmail });
-    if (existing) {
-      console.log('');
-      console.log(`⚠️  Admin já existe: ${existing.email}`);
-      console.log('   Nenhuma alteração feita.');
-      console.log('');
-      await mongoose.disconnect();
-      process.exit(0);
-    }
+  console.log('🔗 Conectando ao MongoDB...');
+  await mongoose.connect(mongoUri);
+  console.log('✅ Conectado.');
 
-    const admin = await User.create({
-      name: adminName,
-      email: adminEmail,
-      password: adminPassword,
+  // IMPORTANTE: não fazer hash aqui. O User model tem um pre('save')
+  // que hasheia automaticamente. Hashear aqui causaria hash duplo
+  // (bcrypt(bcrypt(senha))) e a comparação nunca bateria.
+
+  const existing = await User.findOne({ email: email.toLowerCase() }).select('+password');
+
+  if (existing) {
+    existing.password = password; // texto plano — pre('save') vai hashear
+    existing.role = 'admin';
+    existing.isActive = true;
+    if (!existing.name && name) existing.name = name;
+    await existing.save();
+    console.log(`✅ Admin atualizado: ${email}`);
+    console.log('   role: admin');
+    console.log('   isActive: true');
+    console.log('   senha: atualizada');
+  } else {
+    await User.create({
+      email: email.toLowerCase(),
+      password, // texto plano — pre('save') vai hashear
+      name,
+      phone,
       role: 'admin',
       isActive: true,
+      discountTier: 0,
     });
-
-    console.log('');
-    console.log('✅ Admin criado com sucesso!');
-    console.log('┌──────────────────────────────────────');
-    console.log(`│  Nome:  ${admin.name}`);
-    console.log(`│  Email: ${admin.email}`);
-    console.log(`│  Senha: ${adminPassword}`);
-    console.log(`│  Role:  admin`);
-    console.log('└──────────────────────────────────────');
-    console.log('');
-    console.log('⚠️  IMPORTANTE: Mude a senha após o primeiro login!');
-    console.log('');
-
-    await mongoose.disconnect();
-    process.exit(0);
-  } catch (error) {
-    console.error('');
-    console.error('❌ Erro ao criar admin:', error);
-    console.error('');
-    await mongoose.disconnect();
-    process.exit(1);
+    console.log(`✅ Admin criado: ${email}`);
+    console.log(`   name: ${name}`);
+    console.log(`   phone: ${phone}`);
+    console.log('   role: admin');
   }
+
+  console.log('');
+  console.log('🔐 Login em: /admin/login');
+  console.log(`   Email: ${email}`);
+  console.log('   Senha: (a que você configurou)');
+  console.log('');
+  console.log('⚠️  REMOVA ADMIN_PASSWORD do .env.local agora por segurança.');
+
+  await mongoose.disconnect();
+  process.exit(0);
 }
 
-seedAdmin();
+main().catch((err) => {
+  console.error('❌ Erro:', err);
+  process.exit(1);
+});

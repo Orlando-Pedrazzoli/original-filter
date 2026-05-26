@@ -1,13 +1,16 @@
 /* ══════════════════════════════════════════
-   Original Filter — Footer
-   ══════════════════════════════════════════
-   Ícone de cadeado discreto no bottom bar
-   para acesso ao login administrativo.
+   Footer — Original Filter
+   ──────────────────────────────────────────
+   Estilo industrial-editorial alinhado com o restante do site:
+   - Hero statement com slogan oficial completo
+   - Grid de 4 colunas (Empresa · Catálogo · Buscar · Contato)
+   - Faixa de certificações (IATF / QS / ISO)
+   - Bottom bar com cadeado admin discreto
    ══════════════════════════════════════════ */
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Phone, Mail, MapPin, Lock } from 'lucide-react';
+import { Phone, Mail, MapPin, Lock, Headphones, ArrowUpRight, Award } from 'lucide-react';
 import { CONTACT, CERTIFICATIONS } from '@/lib/constants';
 
 function FacebookIcon({ className }: { className?: string }) {
@@ -26,182 +29,363 @@ function InstagramIcon({ className }: { className?: string }) {
   );
 }
 
+// ══════ Estrutura dos links ══════
+const COMPANY_LINKS = [
+  { label: 'Quem somos', href: '/sobre' },
+  { label: 'Política de qualidade', href: '/qualidade' },
+  { label: 'Sustentabilidade', href: '/sustentabilidade' },
+  { label: 'Política de garantia', href: '/garantia' },
+  { label: 'Seja revendedor', href: '/seja-revendedor', highlight: true },
+];
+
+const CATALOG_LINKS = [
+  { label: 'Catálogo completo', href: '/produtos' },
+  { label: 'Linha patenteada', href: '/produtos?patenteado=true' },
+  { label: 'Lançamentos', href: '/lancamentos' },
+  { label: 'Linha rodoviária', href: '/produtos?linha=rodoviario' },
+  { label: 'Linha agrícola', href: '/produtos?linha=agricola' },
+  { label: 'Sensores NOx', href: '/produtos?tipo=sensor' },
+];
+
+const SEARCH_LINKS = [
+  {
+    label: 'Buscar por veículo',
+    href: '/buscar-por-veiculo',
+    description: 'Marca · modelo · motor',
+  },
+  {
+    label: 'Cross-reference',
+    href: '/cross-reference',
+    description: 'Conversor de filtros',
+  },
+];
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-dark text-white">
-      <div className="bg-brand h-1 w-full" />
+    <footer className="bg-brand-black relative overflow-hidden text-white">
+      {/* Faixa amarela no topo */}
+      <div className="bg-brand-yellow h-1 w-full" />
 
-      <div className="container-custom py-16">
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
-          {/* Logo & Descrição */}
-          <div>
-            <div className="mb-6">
-              <Image
-                src="/images/logo-originalfilter.png"
-                alt="Original Filter"
-                width={120}
-                height={48}
-                className="h-10 w-auto"
-              />
+      {/* Grid blueprint sutil */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage:
+            'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
+          backgroundSize: '48px 48px',
+        }}
+      />
+
+      <div className="relative mx-auto max-w-7xl px-4 md:px-12">
+        {/* ══════ 1. Hero statement ══════ */}
+        <section className="border-b border-white/10 pt-16 pb-12 md:pt-20 md:pb-16">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
+            {/* Logo + slogan */}
+            <div className="lg:col-span-7">
+              <Link href="/" className="group mb-6 inline-flex items-center">
+                <Image
+                  src="/images/logo-originalfilter.png"
+                  alt="Original Filter"
+                  width={160}
+                  height={64}
+                  className="h-12 w-auto"
+                />
+              </Link>
+
+              <div className="mb-4 flex items-center gap-3">
+                <div className="bg-brand-yellow h-px w-8" />
+                <span className="text-brand-yellow font-mono text-[11px] tracking-[0.25em] uppercase">
+                  Especialista em filtros
+                </span>
+              </div>
+
+              <h2
+                className="font-display max-w-xl leading-[0.95] font-black tracking-tight"
+                style={{
+                  fontSize: 'clamp(1.5rem, 3vw, 2.25rem)',
+                  letterSpacing: '-0.035em',
+                }}
+              >
+                Qualidade Superior em
+                <br />
+                <span className="text-brand-yellow">Filtros Automotivos e Sensores.</span>
+              </h2>
+
+              <p className="mt-5 max-w-lg text-sm leading-relaxed text-white/60 md:text-base">
+                Linha completa de reposição para aplicações automotivas, agrícolas, industriais e
+                fora-de-estrada. Centro de Pesquisa & Desenvolvimento próprio em Cotia-SP.
+              </p>
             </div>
 
-            <p className="mb-6 text-sm leading-relaxed text-gray-400">
-              Especialistas em filtros automotivos, agrícolas e industriais. Qualidade superior com
-              certificações internacionais.
-            </p>
+            {/* Contato em destaque (lado direito) */}
+            <div className="lg:col-span-5 lg:border-l lg:border-white/10 lg:pl-8">
+              <div className="text-brand-yellow mb-3 font-mono text-[10px] tracking-[0.22em] uppercase">
+                Atendimento comercial
+              </div>
+              <a
+                href={`tel:${CONTACT.phoneRaw}`}
+                className="hover:text-brand-yellow block font-mono font-bold tracking-tight text-white transition"
+                style={{
+                  fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+                  letterSpacing: '-0.02em',
+                }}
+              >
+                {CONTACT.phone}
+              </a>
 
-            <div className="flex flex-wrap gap-2">
+              <div className="mt-4 space-y-2.5">
+                <a
+                  href={`tel:${CONTACT.sacRaw}`}
+                  className="group flex items-center gap-3 text-sm text-white/70 transition hover:text-white"
+                >
+                  <Headphones className="text-brand-yellow size-4 shrink-0" strokeWidth={2} />
+                  <span>
+                    <span className="mr-1.5 font-mono text-[10px] tracking-widest text-white/40 uppercase">
+                      SAC
+                    </span>
+                    <span className="font-mono font-bold">{CONTACT.sac}</span>
+                  </span>
+                  <ArrowUpRight className="size-3 opacity-0 transition group-hover:opacity-100" />
+                </a>
+                <a
+                  href={`mailto:${CONTACT.email}`}
+                  className="group flex items-center gap-3 text-sm text-white/70 transition hover:text-white"
+                >
+                  <Mail className="text-brand-yellow size-4 shrink-0" strokeWidth={2} />
+                  <span className="font-mono">{CONTACT.email}</span>
+                  <ArrowUpRight className="size-3 opacity-0 transition group-hover:opacity-100" />
+                </a>
+                <div className="flex items-center gap-3 text-sm text-white/70">
+                  <MapPin className="text-brand-yellow size-4 shrink-0" strokeWidth={2} />
+                  <span>{CONTACT.address}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ══════ 2. Grid de links ══════ */}
+        <section className="grid grid-cols-2 gap-8 py-12 md:grid-cols-3 md:py-16 lg:grid-cols-12 lg:gap-12">
+          {/* A Empresa */}
+          <div className="lg:col-span-3">
+            <SectionTitle>A Empresa</SectionTitle>
+            <ul className="space-y-2.5">
+              {COMPANY_LINKS.map((link) => (
+                <li key={link.href}>
+                  <FooterLink href={link.href} highlight={link.highlight}>
+                    {link.label}
+                  </FooterLink>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Catálogo */}
+          <div className="lg:col-span-3">
+            <SectionTitle>Catálogo</SectionTitle>
+            <ul className="space-y-2.5">
+              {CATALOG_LINKS.map((link) => (
+                <li key={link.href}>
+                  <FooterLink href={link.href}>{link.label}</FooterLink>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Buscar */}
+          <div className="lg:col-span-3">
+            <SectionTitle>Buscar</SectionTitle>
+            <ul className="space-y-3">
+              {SEARCH_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="group block py-1 transition">
+                    <div className="group-hover:text-brand-yellow flex items-center gap-1.5 text-sm text-white/80 transition">
+                      {link.label}
+                      <ArrowUpRight className="size-3 -translate-x-1 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
+                    </div>
+                    <div className="mt-0.5 font-mono text-[10px] tracking-widest text-white/40 uppercase">
+                      {link.description}
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Conta / Conexão */}
+          <div className="lg:col-span-3">
+            <SectionTitle>Minha conta</SectionTitle>
+            <ul className="space-y-2.5">
+              <li>
+                <FooterLink href="/conta/login">Entrar</FooterLink>
+              </li>
+              <li>
+                <FooterLink href="/conta/registrar">Criar conta</FooterLink>
+              </li>
+              <li>
+                <FooterLink href="/conta">Meus pedidos</FooterLink>
+              </li>
+              <li>
+                <FooterLink href="/carrinho">Carrinho</FooterLink>
+              </li>
+              <li>
+                <FooterLink href="/contato">Fale conosco</FooterLink>
+              </li>
+            </ul>
+
+            {/* Redes sociais */}
+            <div className="mt-6 border-t border-white/10 pt-5">
+              <div className="mb-3 font-mono text-[10px] tracking-[0.22em] text-white/40 uppercase">
+                Acompanhe
+              </div>
+              <div className="flex gap-2">
+                <SocialButton
+                  href={CONTACT.facebook}
+                  label="Facebook"
+                  icon={<FacebookIcon className="size-3.5" />}
+                />
+                <SocialButton
+                  href={CONTACT.instagram}
+                  label="Instagram"
+                  icon={<InstagramIcon className="size-3.5" />}
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ══════ 3. Faixa de certificações ══════ */}
+        <section className="border-t border-white/10 py-8 md:py-10">
+          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
+            <div className="flex items-center gap-3">
+              <Award className="text-brand-yellow size-4 shrink-0" strokeWidth={2} />
+              <div className="font-mono text-[10px] tracking-[0.22em] whitespace-nowrap text-white/50 uppercase">
+                Auditados por
+              </div>
+            </div>
+
+            <div className="flex flex-1 flex-wrap items-center gap-2 md:gap-3">
               {CERTIFICATIONS.map((cert) => (
                 <span
                   key={cert}
-                  className="rounded border border-gray-700 px-2 py-1 text-xs text-gray-400"
+                  className="inline-flex items-center gap-1.5 border border-white/10 bg-white/5 px-2.5 py-1.5 font-mono text-xs font-bold tracking-wider text-white/80"
+                  style={{ borderRadius: 'var(--radius-edge)' }}
                 >
+                  <span className="bg-brand-yellow size-1.5 rounded-full" />
                   {cert}
                 </span>
               ))}
             </div>
+
+            <Link
+              href="/qualidade"
+              className="hover:text-brand-yellow inline-flex items-center gap-1.5 font-mono text-[11px] tracking-widest whitespace-nowrap text-white/50 uppercase transition"
+            >
+              Política de qualidade
+              <ArrowUpRight className="size-3" />
+            </Link>
           </div>
-
-          {/* Links Institucionais */}
-          <div>
-            <h3 className="text-brand mb-4 text-sm font-bold tracking-wider uppercase">
-              A Empresa
-            </h3>
-
-            <ul className="space-y-3">
-              {[
-                { label: 'Sobre Nós', href: '/sobre' },
-                { label: 'Política de Qualidade', href: '/qualidade' },
-                { label: 'Sustentabilidade', href: '/sustentabilidade' },
-                { label: 'Política de Garantia', href: '/garantia' },
-                { label: 'Blog', href: '/blog' },
-              ].map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="hover:text-brand text-sm text-gray-400 transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Links Produtos */}
-          <div>
-            <h3 className="text-brand mb-4 text-sm font-bold tracking-wider uppercase">Produtos</h3>
-
-            <ul className="space-y-3">
-              {[
-                { label: 'Catálogo Completo', href: '/produtos' },
-                { label: 'Filtro de Ar', href: '/produtos/categoria/filtro-de-ar' },
-                { label: 'Filtro de Óleo', href: '/produtos/categoria/filtro-de-oleo' },
-                {
-                  label: 'Filtro de Combustível',
-                  href: '/produtos/categoria/filtro-de-combustivel',
-                },
-                { label: 'Filtros Hidráulicos', href: '/produtos/categoria/filtro-hidraulico' },
-                { label: 'Lançamentos', href: '/lancamentos' },
-              ].map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="hover:text-brand text-sm text-gray-400 transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contato */}
-          <div>
-            <h3 className="text-brand mb-4 text-sm font-bold tracking-wider uppercase">Contato</h3>
-
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <Phone className="text-brand mt-0.5 h-4 w-4 flex-shrink-0" />
-                <div>
-                  <p className="text-sm text-gray-400">{CONTACT.phone}</p>
-                  <p className="text-xs text-gray-500">SAC: {CONTACT.sac}</p>
-                </div>
-              </li>
-
-              <li className="flex items-center gap-3">
-                <Mail className="text-brand h-4 w-4 flex-shrink-0" />
-                <a
-                  href={`mailto:${CONTACT.email}`}
-                  className="hover:text-brand text-sm text-gray-400 transition-colors"
-                >
-                  {CONTACT.email}
-                </a>
-              </li>
-
-              <li className="flex items-center gap-3">
-                <MapPin className="text-brand h-4 w-4 flex-shrink-0" />
-                <span className="text-sm text-gray-400">{CONTACT.address}</span>
-              </li>
-            </ul>
-
-            <div className="mt-6 flex gap-3">
-              <a
-                href={CONTACT.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:border-brand hover:text-brand flex h-10 w-10 items-center justify-center rounded-full border border-gray-700 text-gray-400 transition-colors"
-                aria-label="Facebook"
-              >
-                <FacebookIcon className="h-4 w-4" />
-              </a>
-
-              <a
-                href={CONTACT.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:border-brand hover:text-brand flex h-10 w-10 items-center justify-center rounded-full border border-gray-700 text-gray-400 transition-colors"
-                aria-label="Instagram"
-              >
-                <InstagramIcon className="h-4 w-4" />
-              </a>
-            </div>
-          </div>
-        </div>
+        </section>
       </div>
 
-      {/* ══════ Bottom Bar — com ícone cadeado admin ══════ */}
-      <div className="border-t border-gray-800">
-        <div className="container-custom flex flex-col items-center justify-between gap-2 py-6 text-xs text-gray-500 sm:flex-row">
-          <p>&copy; {currentYear} Original Filter. Todos os direitos reservados.</p>
+      {/* ══════ 4. Bottom bar ══════ */}
+      <div className="bg-brand-black relative border-t border-white/10">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 text-[11px] sm:flex-row md:px-12">
+          <div className="font-mono tracking-widest text-white/40 uppercase">
+            © {currentYear} Original Filter · Todos os direitos reservados
+          </div>
 
-          <div className="flex items-center gap-4">
-            <p>
+          <div className="flex items-center gap-5 font-mono tracking-widest text-white/40 uppercase">
+            <span>
               Desenvolvido por{' '}
               <a
                 href="https://pedrazzolidigital.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-brand text-gray-400 transition-colors"
+                className="hover:text-brand-yellow text-white/60 transition"
               >
                 Pedrazzoli Digital
               </a>
-            </p>
+            </span>
 
-            {/* ══════ Cadeado Admin — discreto ══════ */}
+            {/* Cadeado admin — discreto */}
             <Link
               href="/admin/login"
-              className="text-gray-700 transition-colors hover:text-gray-400"
+              className="text-white/15 transition hover:text-white/60"
               aria-label="Acesso administrativo"
               title="Acesso administrativo"
             >
-              <Lock className="h-3.5 w-3.5" />
+              <Lock className="size-3.5" />
             </Link>
           </div>
         </div>
       </div>
     </footer>
+  );
+}
+
+// ══════════════════════════════════════════
+//   Componentes internos
+// ══════════════════════════════════════════
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mb-5">
+      <div className="mb-3 flex items-center gap-2">
+        <div className="bg-brand-yellow h-px w-6" />
+        <span className="text-brand-yellow font-mono text-[10px] tracking-[0.22em] uppercase">
+          {children}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function FooterLink({
+  href,
+  children,
+  highlight,
+}: {
+  href: string;
+  children: React.ReactNode;
+  highlight?: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className={`group inline-flex items-center gap-1.5 text-sm transition ${
+        highlight
+          ? 'text-brand-yellow hover:text-brand-yellow-bright font-semibold'
+          : 'text-white/70 hover:text-white'
+      }`}
+    >
+      {highlight && <span className="bg-brand-yellow animate-pulse-yellow size-1.5 rounded-full" />}
+      {children}
+      <ArrowUpRight className="size-3 -translate-x-1 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
+    </Link>
+  );
+}
+
+function SocialButton({
+  href,
+  label,
+  icon,
+}: {
+  href: string;
+  label: string;
+  icon: React.ReactNode;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={label}
+      className="hover:bg-brand-yellow hover:border-brand-yellow hover:text-brand-black inline-flex size-9 items-center justify-center border border-white/10 bg-white/5 text-white/70 transition"
+      style={{ borderRadius: 'var(--radius-edge)' }}
+    >
+      {icon}
+    </a>
   );
 }
