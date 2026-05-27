@@ -2,9 +2,9 @@
    Navbar — Original Filter
    ──────────────────────────────────────────
    - Topbar técnica fina (institucional: localização, atendimento)
-   - Faixa principal: logo + search inline + ações (login, revendedor)
-   - Faixa de navegação: 6 links principais
-   - Mobile: hamburger + drawer
+   - Faixa principal: logo grande + tagline + search inline + ações
+   - Faixa de navegação: dropdown EMPRESA + links principais
+   - Mobile: hamburger + drawer com seção empresa expansível
    ══════════════════════════════════════════ */
 
 'use client';
@@ -25,16 +25,25 @@ import {
   Loader2,
   ArrowUpRight,
   ChevronRight,
+  ChevronDown,
 } from 'lucide-react';
 import { useAutocomplete } from '@/hooks/use-autocomplete';
 import type { AutocompleteSuggestion } from '@/lib/search-types';
 
+// ─── Links do dropdown EMPRESA ───
+const EMPRESA_LINKS = [
+  { label: 'Quem somos', href: '/sobre' },
+  { label: 'Política de qualidade', href: '/qualidade' },
+  { label: 'Sustentabilidade', href: '/sustentabilidade' },
+  { label: 'Política de garantia', href: '/garantia' },
+];
+
+// ─── Links principais (sem "Quem somos" — foi para o dropdown EMPRESA) ───
 const NAV_LINKS = [
   { label: 'Catálogo', href: '/produtos' },
   { label: 'Por veículo', href: '/buscar-por-veiculo' },
   { label: 'Cross-Reference', href: '/cross-reference' },
   { label: 'Lançamentos', href: '/lancamentos' },
-  { label: 'Quem somos', href: '/sobre' },
   { label: 'Seja revendedor', href: '/seja-revendedor', highlight: true },
 ];
 
@@ -63,29 +72,28 @@ export function Navbar() {
       {/* ─── Faixa principal ─── */}
       <div className="border-brand-mist border-b">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
-          <div className="flex h-20 items-center gap-4 lg:gap-8">
-            {/* Logo */}
-            <Link href="/" className="group flex shrink-0 items-center gap-3">
-              <div className="relative size-10 lg:size-12">
+          <div className="flex h-24 items-center gap-4 lg:gap-8">
+            {/* Logo grande + tagline embaixo */}
+            <Link
+              href="/"
+              className="group flex shrink-0 flex-col items-start gap-1"
+              aria-label="Original Filter — Página inicial"
+            >
+              <div className="relative h-14 w-32 sm:h-16 sm:w-36 lg:h-[72px] lg:w-44">
                 <Image
                   src="/images/logo-originalfilter.png"
                   alt="Original Filter"
                   fill
-                  sizes="48px"
-                  className="object-contain"
+                  sizes="(min-width: 1024px) 176px, (min-width: 640px) 144px, 128px"
+                  className="object-contain object-left"
                   priority
                 />
               </div>
-              <div className="hidden leading-none sm:block">
-                <div
-                  className="font-display text-brand-black font-black tracking-tight"
-                  style={{ fontSize: '1.05rem', letterSpacing: '-0.02em' }}
-                >
-                  ORIGINAL FILTER
-                </div>
-                <div className="text-brand-yellow-deep font-display mt-0.5 text-[10px] font-semibold tracking-[0.18em] uppercase">
-                  Especialista em Filtros e Sensores
-                </div>
+              <div
+                className="text-brand-yellow-deep font-display group-hover:text-brand-black text-[9px] leading-tight font-semibold tracking-[0.18em] uppercase transition-colors sm:text-[10px]"
+                style={{ marginLeft: '2px' }}
+              >
+                Especialista em Filtros e Sensores
               </div>
             </Link>
 
@@ -136,6 +144,12 @@ export function Navbar() {
       <nav className="border-brand-mist bg-brand-snow hidden border-b md:block">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <ul className="flex h-11 items-center gap-1">
+            {/* Dropdown EMPRESA — primeiro item */}
+            <li>
+              <EmpresaDropdown pathname={pathname} />
+            </li>
+
+            {/* Links principais */}
             {NAV_LINKS.map((link) => {
               const active =
                 pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
@@ -175,6 +189,123 @@ export function Navbar() {
         {mobileOpen && <MobileDrawer onClose={() => setMobileOpen(false)} />}
       </AnimatePresence>
     </header>
+  );
+}
+
+// ══════════════════════════════════════════
+//   Dropdown EMPRESA (desktop)
+// ══════════════════════════════════════════
+function EmpresaDropdown({ pathname }: { pathname: string }) {
+  const [open, setOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Considera o item ativo se está em qualquer rota da empresa
+  const isActive = EMPRESA_LINKS.some((l) => pathname.startsWith(l.href));
+
+  // Hover com delay para não fechar ao mover o mouse rapidamente
+  function handleEnter() {
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+    setOpen(true);
+  }
+
+  function handleLeave() {
+    closeTimer.current = setTimeout(() => setOpen(false), 150);
+  }
+
+  // Fecha ao clicar fora
+  useEffect(() => {
+    function onClickOutside(e: MouseEvent) {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', onClickOutside);
+    return () => document.removeEventListener('mousedown', onClickOutside);
+  }, []);
+
+  // Fecha com ESC
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setOpen(false);
+    }
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, []);
+
+  return (
+    <div
+      ref={wrapperRef}
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
+      className="relative"
+    >
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        aria-haspopup="menu"
+        className={`font-display relative inline-flex h-11 items-center gap-1 px-3 text-xs font-semibold tracking-widest uppercase transition lg:px-4 ${
+          isActive ? 'text-brand-black' : 'text-brand-iron hover:text-brand-black'
+        }`}
+      >
+        Empresa
+        <ChevronDown
+          className={`size-3 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          strokeWidth={2.5}
+        />
+        {isActive && (
+          <motion.div
+            layoutId="nav-active"
+            className="bg-brand-yellow absolute right-2 bottom-0 left-2 h-0.5"
+            transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+          />
+        )}
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.12 }}
+            role="menu"
+            className="border-brand-mist absolute top-full left-0 z-50 mt-px min-w-56 border bg-white shadow-2xl"
+            style={{ borderRadius: 'var(--radius-edge)' }}
+          >
+            <ul className="py-1">
+              {EMPRESA_LINKS.map((link) => {
+                const active = pathname === link.href;
+                return (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      role="menuitem"
+                      onClick={() => setOpen(false)}
+                      className={`font-display flex items-center justify-between gap-3 px-4 py-2.5 text-xs font-semibold tracking-widest uppercase transition ${
+                        active
+                          ? 'bg-brand-snow text-brand-black'
+                          : 'text-brand-iron hover:bg-brand-snow hover:text-brand-black'
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        {active && <span className="bg-brand-yellow size-1.5" />}
+                        {link.label}
+                      </span>
+                      <ChevronRight className="text-brand-steel size-3" strokeWidth={2} />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
@@ -377,6 +508,8 @@ function KindBadge({ kind }: { kind: AutocompleteSuggestion['kind'] }) {
 //   Mobile drawer
 // ══════════════════════════════════════════
 function MobileDrawer({ onClose }: { onClose: () => void }) {
+  const [empresaOpen, setEmpresaOpen] = useState(false);
+
   return (
     <>
       <motion.div
@@ -401,6 +534,48 @@ function MobileDrawer({ onClose }: { onClose: () => void }) {
         </div>
 
         <nav className="flex-1 space-y-1 overflow-y-auto p-5">
+          {/* EMPRESA expansível */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setEmpresaOpen((o) => !o)}
+              aria-expanded={empresaOpen}
+              className="font-display text-brand-black hover:text-brand-yellow-deep flex w-full items-center justify-between px-2 py-3 text-base font-semibold tracking-wide uppercase transition"
+            >
+              Empresa
+              <ChevronDown
+                className={`size-4 transition-transform duration-200 ${empresaOpen ? 'rotate-180' : ''}`}
+                strokeWidth={2.5}
+              />
+            </button>
+
+            <AnimatePresence initial={false}>
+              {empresaOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden"
+                >
+                  <ul className="border-brand-mist ml-2 space-y-1 border-l py-1 pl-3">
+                    {EMPRESA_LINKS.map((link) => (
+                      <li key={link.href}>
+                        <Link
+                          href={link.href}
+                          className="text-brand-iron hover:text-brand-yellow-deep block py-2 text-sm font-medium transition"
+                        >
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Links principais */}
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}

@@ -280,6 +280,63 @@ export interface OrderListQuery {
 }
 
 // ══════════════════════════════════════════
+// Customer types
+// ══════════════════════════════════════════
+export type CustomerRole = 'retail' | 'reseller';
+export type CustomerTier = 0 | 5 | 10 | 15 | 20;
+
+export interface CustomerListItem {
+  _id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: CustomerRole | 'admin';
+  discountTier: number;
+  isActive: boolean;
+  company: { razaoSocial?: string; cnpj?: string } | null;
+  lastLogin: string | null;
+  createdAt: string;
+  ordersCount: number;
+  totalSpent: number;
+  lastOrderAt: string | null;
+}
+
+export interface CustomerListResponse {
+  items: CustomerListItem[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
+  };
+  counts: {
+    retail: number;
+    reseller: number;
+    active: number;
+    inactive: number;
+  };
+  filters: {
+    q: string;
+    role: string;
+    active: string;
+    tier: string;
+    sort: string;
+    order: 'asc' | 'desc';
+  };
+}
+
+export interface CustomerListQuery {
+  q?: string;
+  role?: CustomerRole | 'all' | '';
+  active?: 'true' | 'false' | '';
+  tier?: string;
+  sort?: string;
+  order?: 'asc' | 'desc';
+  page?: number;
+  limit?: number;
+}
+
+// ══════════════════════════════════════════
 // Helpers internos
 // ══════════════════════════════════════════
 async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
@@ -642,6 +699,54 @@ export const adminApi = {
       fetchJson(`/api/admin/orders/${encodeURIComponent(id)}/status`, {
         method: 'PATCH',
         body: JSON.stringify({ action: 'cancel', reason }),
+      }),
+  },
+
+  customers: {
+    /** Lista paginada com filtros e counts */
+    list: (query: CustomerListQuery = {}): Promise<CustomerListResponse> =>
+      fetchJson<CustomerListResponse>(
+        `/api/admin/customers${buildQueryString(query as Record<string, unknown>)}`,
+      ),
+
+    /** Detalhe completo + pedidos + stats */
+    get: (
+      id: string,
+    ): Promise<{
+      customer: Record<string, unknown>;
+      orders: Array<Record<string, unknown>>;
+      stats: {
+        totalOrders: number;
+        totalPaid: number;
+        paidOrders: number;
+        totalDiscount: number;
+        firstOrderAt: string | null;
+        lastOrderAt: string | null;
+      };
+    }> => fetchJson(`/api/admin/customers/${encodeURIComponent(id)}`),
+
+    /** Atualizar role/tier/isActive */
+    update: (
+      id: string,
+      data: {
+        role?: CustomerRole;
+        discountTier?: CustomerTier;
+        isActive?: boolean;
+      },
+    ): Promise<{
+      success: boolean;
+      customer: {
+        _id: string;
+        name: string;
+        email: string;
+        role: string;
+        discountTier: number;
+        isActive: boolean;
+      };
+    }> =>
+      fetchJson(`/api/admin/customers/${encodeURIComponent(id)}`, {
+        method: 'PATCH',
+        body: JSON.stringify(data),
       }),
   },
 };

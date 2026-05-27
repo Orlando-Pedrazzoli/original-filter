@@ -271,6 +271,7 @@ export default async function AdminDashboardPage() {
             title="Clientes"
             description={`${totalCustomers} cadastrados`}
             href="/admin/clientes"
+            available
           />
         </div>
       </section>
