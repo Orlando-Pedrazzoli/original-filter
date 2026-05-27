@@ -6,8 +6,10 @@
    - /conta/*         → requer logado          (redireciona para /conta/login)
    - /admin/login     → público
    - /conta/login     → público
-   - /conta/registrar → público
-   
+   - /conta/cadastro  → público
+   - /conta/recuperar → público
+   - /conta/resetar   → público
+
    NOTA: o middleware usa NextAuth v5 `auth()` que decodifica o JWT
    sem ir ao banco — é rápido e adequado para Edge Runtime.
    ══════════════════════════════════════════ */
@@ -24,7 +26,11 @@ export default auth((req) => {
 
   // ─── Rotas públicas dentro de áreas protegidas ───
   const isAdminLogin = pathname === '/admin/login';
-  const isAccountLogin = pathname === '/conta/login' || pathname === '/conta/registrar';
+  const isAccountPublic =
+    pathname === '/conta/login' ||
+    pathname === '/conta/cadastro' ||
+    pathname === '/conta/recuperar' ||
+    pathname === '/conta/resetar';
 
   // ─── /admin/* ───
   if (pathname.startsWith('/admin')) {
@@ -53,9 +59,15 @@ export default auth((req) => {
 
   // ─── /conta/* ───
   if (pathname.startsWith('/conta')) {
-    if (isAccountLogin) {
-      // Se já está logado, redireciona conforme role
-      if (isLoggedIn) {
+    if (isAccountPublic) {
+      // Se já está logado e está numa página de entrada (login/cadastro/recuperar),
+      // redireciona pro destino. Exceção: /conta/resetar — pode ser que o user
+      // tenha sessão antiga e queira definir nova senha via link do email.
+      const isEntryPage =
+        pathname === '/conta/login' ||
+        pathname === '/conta/cadastro' ||
+        pathname === '/conta/recuperar';
+      if (isLoggedIn && isEntryPage) {
         const dest = userRole === 'admin' ? '/admin' : '/conta';
         return NextResponse.redirect(new URL(dest, nextUrl));
       }

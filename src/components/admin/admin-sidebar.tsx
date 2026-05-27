@@ -57,7 +57,7 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Comercial',
     items: [
-      { href: '/admin/pedidos', label: 'Pedidos', icon: ShoppingBag, badge: 'soon' },
+      { href: '/admin/pedidos', label: 'Pedidos', icon: ShoppingBag },
       { href: '/admin/clientes', label: 'Clientes', icon: Users, badge: 'soon' },
       { href: '/admin/revendedores', label: 'Revendedores', icon: ClipboardList },
     ],

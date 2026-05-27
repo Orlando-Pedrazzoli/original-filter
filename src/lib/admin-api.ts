@@ -197,6 +197,89 @@ export interface ResellerListQuery {
 }
 
 // ══════════════════════════════════════════
+// Order types
+// ══════════════════════════════════════════
+export type PaymentStatus =
+  | 'pending'
+  | 'processing'
+  | 'paid'
+  | 'failed'
+  | 'refunded'
+  | 'chargeback';
+
+export type FulfillmentStatus =
+  | 'pending'
+  | 'processing'
+  | 'shipped'
+  | 'delivered'
+  | 'cancelled'
+  | 'returned';
+
+export interface OrderListItem {
+  _id: string;
+  orderNumber: string;
+  customerName: string;
+  customerEmail: string;
+  customerRole: string;
+  customerTier: number;
+  subtotal: number;
+  discountTotal: number;
+  shippingCost: number;
+  total: number;
+  paymentStatus: PaymentStatus;
+  fulfillmentStatus: FulfillmentStatus;
+  paymentMethod: string;
+  shippingMethod: string;
+  trackingCode: string;
+  createdAt: string;
+}
+
+export interface OrderListResponse {
+  items: OrderListItem[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
+  };
+  counts: {
+    pending: number;
+    processing: number;
+    shipped: number;
+    delivered: number;
+    cancelled: number;
+    returned: number;
+  };
+  stats: {
+    totalRevenue: number;
+    paidRevenue: number;
+  };
+  filters: {
+    q: string;
+    paymentStatus: string;
+    fulfillmentStatus: string;
+    role: string;
+    startDate: string;
+    endDate: string;
+    sort: string;
+    order: 'asc' | 'desc';
+  };
+}
+
+export interface OrderListQuery {
+  q?: string;
+  paymentStatus?: PaymentStatus | '';
+  fulfillmentStatus?: FulfillmentStatus | '';
+  role?: 'retail' | 'reseller' | '';
+  startDate?: string;
+  endDate?: string;
+  sort?: string;
+  order?: 'asc' | 'desc';
+  page?: number;
+  limit?: number;
+}
+
+// ══════════════════════════════════════════
 // Helpers internos
 // ══════════════════════════════════════════
 async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
@@ -474,6 +557,91 @@ export const adminApi = {
       fetchJson(`/api/admin/reseller-applications/${encodeURIComponent(id)}`, {
         method: 'PATCH',
         body: JSON.stringify({ action: 'reopen' }),
+      }),
+  },
+
+  orders: {
+    /** Lista paginada com filtros e counts */
+    list: (query: OrderListQuery = {}): Promise<OrderListResponse> =>
+      fetchJson<OrderListResponse>(
+        `/api/admin/orders${buildQueryString(query as Record<string, unknown>)}`,
+      ),
+
+    /** Detalhe completo */
+    get: (id: string): Promise<{ order: Record<string, unknown> }> =>
+      fetchJson(`/api/admin/orders/${encodeURIComponent(id)}`),
+
+    /** Mudar fulfillmentStatus (pending → processing → shipped → delivered) */
+    updateFulfillment: (
+      id: string,
+      fulfillmentStatus: FulfillmentStatus,
+      notes?: string,
+    ): Promise<{
+      success: boolean;
+      order: { _id: string; orderNumber: string; fulfillmentStatus: string };
+    }> =>
+      fetchJson(`/api/admin/orders/${encodeURIComponent(id)}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          action: 'updateFulfillment',
+          fulfillmentStatus,
+          notes,
+        }),
+      }),
+
+    /** Adicionar código de rastreio (Melhor Envio) */
+    addTracking: (
+      id: string,
+      trackingCode: string,
+      trackingUrl?: string,
+    ): Promise<{
+      success: boolean;
+      order: {
+        _id: string;
+        orderNumber: string;
+        trackingCode: string;
+        fulfillmentStatus: string;
+      };
+    }> =>
+      fetchJson(`/api/admin/orders/${encodeURIComponent(id)}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ action: 'addTracking', trackingCode, trackingUrl }),
+      }),
+
+    /** Marcar como pago manualmente (PIX/boleto pago fora do gateway) */
+    markPaidManually: (
+      id: string,
+      notes?: string,
+    ): Promise<{
+      success: boolean;
+      order: {
+        _id: string;
+        orderNumber: string;
+        paymentStatus: string;
+        fulfillmentStatus: string;
+      };
+    }> =>
+      fetchJson(`/api/admin/orders/${encodeURIComponent(id)}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ action: 'markPaidManually', notes }),
+      }),
+
+    /** Cancelar com motivo */
+    cancel: (
+      id: string,
+      reason: string,
+    ): Promise<{
+      success: boolean;
+      order: {
+        _id: string;
+        orderNumber: string;
+        fulfillmentStatus: string;
+        cancellationReason: string;
+      };
+    }> =>
+      fetchJson(`/api/admin/orders/${encodeURIComponent(id)}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ action: 'cancel', reason }),
       }),
   },
 };

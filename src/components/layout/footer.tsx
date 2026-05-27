@@ -222,7 +222,7 @@ export default function Footer() {
                 <FooterLink href="/conta/login">Entrar</FooterLink>
               </li>
               <li>
-                <FooterLink href="/conta/registrar">Criar conta</FooterLink>
+                <FooterLink href="/conta/cadastro">Criar conta</FooterLink>
               </li>
               <li>
                 <FooterLink href="/conta">Meus pedidos</FooterLink>

@@ -262,8 +262,9 @@ export default async function AdminDashboardPage() {
           <QuickAction
             icon={<ShoppingBag className="size-5" />}
             title="Pedidos"
-            description="Aguardando integração de checkout"
+            description="Acompanhar pagamento, separação e envio"
             href="/admin/pedidos"
+            available
           />
           <QuickAction
             icon={<Users className="size-5" />}
