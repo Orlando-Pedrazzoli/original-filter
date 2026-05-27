@@ -37,6 +37,10 @@ export interface IUser extends Document {
 
   approvedFromApplication?: mongoose.Types.ObjectId;
 
+  // Recuperação de senha
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
+
   createdAt: Date;
   updatedAt: Date;
 
@@ -141,6 +145,10 @@ const UserSchema = new Schema<IUser>(
       type: Schema.Types.ObjectId,
       ref: 'ResellerApplication',
     },
+
+    // Recuperação de senha — token armazenado em hash sha256
+    passwordResetToken: { type: String, select: false },
+    passwordResetExpires: { type: Date, select: false },
   },
   { timestamps: true },
 );

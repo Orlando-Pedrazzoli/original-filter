@@ -1,25 +1,38 @@
+/* ══════════════════════════════════════════
+   /conta/login — Login do cliente
+   ══════════════════════════════════════════ */
+
 import type { Metadata } from 'next';
-import { LogIn } from 'lucide-react';
-import ComingSoon from '@/components/shared/coming-soon';
+import { redirect } from 'next/navigation';
+import { auth } from '@/lib/auth';
+import { LoginForm } from './login-form';
+import { AccountAuthLayout } from '@/components/account/account-auth-layout';
 
 export const metadata: Metadata = {
-  title: 'Entrar na sua conta',
+  title: 'Entrar — Original Filter',
+  description: 'Acesse sua conta para acompanhar pedidos e aproveitar preços B2B.',
+  robots: { index: false, follow: false },
 };
 
-export default function ContaLoginPage() {
+interface PageProps {
+  searchParams: Promise<{ redirect?: string; error?: string }>;
+}
+
+export default async function LoginPage({ searchParams }: PageProps) {
+  const session = await auth();
+  const sp = await searchParams;
+
+  // Já logado → redireciona
+  if (session?.user) {
+    if (session.user.role === 'admin') {
+      redirect('/admin');
+    }
+    redirect(sp.redirect || '/conta');
+  }
+
   return (
-    <ComingSoon
-      icon={LogIn}
-      title="Área do Cliente"
-      description="Em breve você poderá acessar sua conta, acompanhar pedidos e gerenciar seus dados diretamente pelo nosso site."
-      features={[
-        'Login com e-mail e senha',
-        'Preços personalizados para distribuidores',
-        'Histórico completo de pedidos',
-        'Recompra rápida com um clique',
-      ]}
-      ctaLabel="Voltar ao início"
-      ctaHref="/"
-    />
+    <AccountAuthLayout title="Entrar" subtitle="Acompanhe seus pedidos e desfrute do programa B2B.">
+      <LoginForm redirectTo={sp.redirect} initialError={sp.error} />
+    </AccountAuthLayout>
   );
 }
