@@ -69,8 +69,8 @@ export function Navbar() {
       {/* ─── Topbar institucional ─── */}
       <TopbarStrip />
 
-      {/* ─── Faixa principal ─── */}
-      <div className="border-brand-mist border-b">
+      {/* ─── Faixa principal — fundo branco + divisória amarela superior ─── */}
+      <div className="border-brand-yellow border-brand-mist border-t-2 border-b bg-white">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
           <div className="flex h-24 items-center gap-4 lg:gap-8">
             {/* Logo grande + tagline embaixo */}
@@ -81,7 +81,7 @@ export function Navbar() {
             >
               <div className="relative h-14 w-32 sm:h-16 sm:w-36 lg:h-[72px] lg:w-44">
                 <Image
-                  src="/images/logo-originalfilter.png"
+                  src="/images/logo-originalfilter2.png"
                   alt="Original Filter"
                   fill
                   sizes="(min-width: 1024px) 176px, (min-width: 640px) 144px, 128px"
@@ -143,7 +143,7 @@ export function Navbar() {
       {/* ─── Faixa de navegação ─── */}
       <nav className="border-brand-mist bg-brand-snow hidden border-b md:block">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
-          <ul className="flex h-11 items-center gap-1">
+          <ul className="flex h-11 items-center justify-center gap-1">
             {/* Dropdown EMPRESA — primeiro item */}
             <li>
               <EmpresaDropdown pathname={pathname} />

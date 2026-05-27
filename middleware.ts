@@ -10,12 +10,17 @@
    - /conta/recuperar → público
    - /conta/resetar   → público
 
-   NOTA: o middleware usa NextAuth v5 `auth()` que decodifica o JWT
-   sem ir ao banco — é rápido e adequado para Edge Runtime.
+   IMPORTANTE: Usa authConfig (edge-safe) — NÃO o auth.ts completo.
+   O middleware roda no Edge Runtime da Vercel, que não suporta
+   Mongoose nem outras Node.js APIs. authConfig só contém callbacks
+   e tipos, sem providers que dependem do banco.
    ══════════════════════════════════════════ */
 
 import { NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
+import NextAuth from 'next-auth';
+import { authConfig } from '@/lib/auth.config';
+
+const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const { nextUrl } = req;

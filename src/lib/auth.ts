@@ -1,13 +1,11 @@
 /* ══════════════════════════════════════════
-   Original Filter — NextAuth v5 Config
+   Original Filter — NextAuth v5 (Full)
    ══════════════════════════════════════════
-   Mudanças vs versão anterior:
-   - Tipos próprios (UserRole, DiscountTier) via types/next-auth.d.ts
-   - signIn page para cliente final (/conta/login), middleware redireciona admin
-   - Callbacks incluem discountTier no token e session
-   - trustHost: true (necessário em Vercel + custom domain)
-   - lastLogin assíncrono (fire-and-forget, não atrasa o login)
-   - Senha vazia (guest) é rejeitada explicitamente
+   Importa o authConfig (edge-safe) e adiciona o Credentials provider
+   que usa Mongoose. Este arquivo NUNCA é importado pelo middleware —
+   só pelas API routes.
+
+   Para o middleware Edge-safe, use auth.config.ts diretamente.
    ══════════════════════════════════════════ */
 
 import NextAuth from 'next-auth';
@@ -15,17 +13,10 @@ import Credentials from 'next-auth/providers/credentials';
 import dbConnect from '@/lib/db';
 import User from '@/models/User';
 import type { UserRole, DiscountTier } from '@/types';
+import { authConfig } from './auth.config';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  trustHost: true,
-  session: {
-    strategy: 'jwt',
-    maxAge: 7 * 24 * 60 * 60, // 7 dias
-  },
-  pages: {
-    signIn: '/conta/login',
-    error: '/conta/login',
-  },
+  ...authConfig,
   providers: [
     Credentials({
       name: 'credentials',
@@ -79,22 +70,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id as string;
-        token.role = user.role;
-        token.discountTier = user.discountTier;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id;
-        session.user.role = token.role;
-        session.user.discountTier = token.discountTier;
-      }
-      return session;
-    },
-  },
 });
