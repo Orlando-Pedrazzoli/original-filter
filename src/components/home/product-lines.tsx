@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ArrowUpRight, Truck, Sprout, Mountain, Car, Factory, Briefcase } from 'lucide-react';
+import { ArrowUpRight, Truck, Sprout, Mountain, Car, Factory } from 'lucide-react';
 import type { VehicleLine } from '@/lib/search-types';
 
 const LINE_ICONS: Record<string, React.ElementType> = {
@@ -27,6 +27,7 @@ const LINE_IMAGES: Record<string, string> = {
   rodoviario: '/images/rodoviaria.jpg',
   'maquinas-pesadas': '/images/maquinas-pesadas.jpg',
   industrial: '/images/industrial.jpg',
+  automotivo: '/images/automotivo.jpg',
 };
 
 export function ProductLines() {
@@ -79,33 +80,17 @@ export function ProductLines() {
           {lines.length > 0 && (
             <Link
               href="/produtos"
-              className="group bg-brand-black hover:bg-brand-graphite relative p-8 text-white transition md:p-10"
+              aria-label="Veja todos os produtos"
+              className="group bg-brand-white relative block overflow-hidden"
+              style={{ aspectRatio: '1323 / 1029', borderRadius: '8px' }}
             >
-              <div
-                className="flex h-full min-h-[260px] flex-col justify-between"
-                style={{ aspectRatio: '1323 / 1029' }}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="bg-brand-yellow h-px w-8" />
-                  <span className="text-brand-yellow font-mono text-[10px] tracking-[0.22em] uppercase">
-                    Catálogo completo
-                  </span>
-                </div>
-                <div>
-                  <h3
-                    className="font-display mt-6 text-3xl leading-none font-black md:text-4xl"
-                    style={{ letterSpacing: '-0.03em' }}
-                  >
-                    Veja todos
-                    <br />
-                    os produtos
-                  </h3>
-                  <div className="font-display text-brand-yellow mt-6 inline-flex items-center gap-2 text-sm font-semibold tracking-wide uppercase transition-all group-hover:gap-3">
-                    Acessar catálogo
-                    <ArrowUpRight className="size-4" strokeWidth={2} />
-                  </div>
-                </div>
-              </div>
+              <Image
+                src="/images/todos-produtos.jpg"
+                alt="Veja todos os produtos"
+                fill
+                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+              />
             </Link>
           )}
 
@@ -113,53 +98,21 @@ export function ProductLines() {
           {lines.length > 0 && (
             <Link
               href="/seja-revendedor"
-              className="group bg-brand-yellow text-brand-black hover:bg-brand-yellow-bright relative overflow-hidden p-8 transition md:p-10"
+              aria-label="Seja um revendedor"
+              className="group relative block overflow-hidden"
+              style={{
+                aspectRatio: '1323 / 1029',
+                backgroundColor: '#fcd103',
+                borderRadius: '8px',
+              }}
             >
-              {/* Pattern diagonal sutil no hover */}
-              <div
-                className="pointer-events-none absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100"
-                style={{
-                  backgroundImage:
-                    'repeating-linear-gradient(135deg, transparent, transparent 20px, rgba(0,0,0,0.04) 20px, rgba(0,0,0,0.04) 21px)',
-                }}
+              <Image
+                src="/images/revendedor.png"
+                alt="Seja um revendedor"
+                fill
+                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                className="object-contain transition-transform duration-500 group-hover:scale-105"
               />
-              {/* Ícone grande de fundo decorativo */}
-              <Briefcase
-                className="text-brand-black/[0.06] group-hover:text-brand-black/[0.1] pointer-events-none absolute -right-6 -bottom-6 size-48 transition-colors"
-                strokeWidth={1}
-              />
-
-              <div
-                className="relative flex h-full min-h-[260px] flex-col justify-between"
-                style={{ aspectRatio: '1323 / 1029' }}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-brand-black h-px w-8" />
-                    <span className="text-brand-black font-mono text-[10px] font-bold tracking-[0.22em] uppercase">
-                      Programa B2B
-                    </span>
-                  </div>
-                  <Briefcase className="text-brand-black size-12 md:size-14" strokeWidth={1.5} />
-                </div>
-                <div>
-                  <h3
-                    className="font-display text-3xl leading-none font-black md:text-4xl"
-                    style={{ letterSpacing: '-0.03em' }}
-                  >
-                    Seja um
-                    <br />
-                    revendedor
-                  </h3>
-                  <p className="text-brand-black/80 mt-3 max-w-xs text-sm leading-relaxed">
-                    Descontos exclusivos, preços diferenciados e atendimento prioritário.
-                  </p>
-                  <div className="font-display text-brand-black mt-6 inline-flex items-center gap-2 text-sm font-bold tracking-wide uppercase transition-all group-hover:gap-3">
-                    Solicitar acesso
-                    <ArrowUpRight className="size-4" strokeWidth={2.5} />
-                  </div>
-                </div>
-              </div>
             </Link>
           )}
         </div>
@@ -185,7 +138,7 @@ function LineCard({ line, index }: { line: VehicleLine; index: number }) {
           href={`/produtos?linha=${line.slug}`}
           aria-label={line.label}
           className="group bg-brand-white relative block overflow-hidden"
-          style={{ aspectRatio: '1323 / 1029' }}
+          style={{ aspectRatio: '1323 / 1029', borderRadius: '8px' }}
         >
           <Image
             src={imageSrc}
@@ -210,7 +163,7 @@ function LineCard({ line, index }: { line: VehicleLine; index: number }) {
       <Link
         href={`/produtos?linha=${line.slug}`}
         className="group bg-brand-white hover:bg-brand-paper relative flex flex-col justify-between p-8 transition-colors md:p-10"
-        style={{ aspectRatio: '1323 / 1029' }}
+        style={{ aspectRatio: '1323 / 1029', borderRadius: '8px' }}
       >
         {/* Faixa amarela vertical à esquerda */}
         <div className="bg-brand-yellow absolute top-0 bottom-0 left-0 w-1 opacity-0 transition-opacity group-hover:opacity-100" />

@@ -1,10 +1,20 @@
 /* ══════════════════════════════════════════
    HeroCarousel — Original Filter
    ──────────────────────────────────────────
-   Carrossel principal da homepage com 5 banners (um por linha de veículo).
-   - Layout 1920×750 (responsivo)
+   Carrossel principal da homepage com 4 banners (um por linha de veículo).
+   Linhas configuradas: Rodoviária, Máquinas Pesadas, Industrial, Automotivo.
+   A ordem real de exibição segue o que vem da API /api/vehicle-selector/lines.
+   - Layout 1920×750 (responsivo, mobile: aspect 4/5)
    - Autoplay 6 segundos
-   - Estilo: tipográfico industrial (sem fotos por enquanto)
+   - Imagens de fundo reais por linha (Unsplash, licença comercial)
+   - Best practices aplicadas:
+     * Gradient overlay direcional esquerda → direita (legibilidade do texto)
+     * Vignette inferior (legibilidade dos controles)
+     * Camada de cor (tintHex) com blend-mode multiply para identidade visual
+     * Ken Burns sutil (zoom 1.0 → 1.05 ao longo do autoplay)
+     * Tipografia mantida em Archivo Black, alto contraste
+     * Padrões decorativos removidos (foto real substitui)
+   - Mobile: imagem ocupa fundo inteiro, gradient cobre todo o slide
    - Cada slide carrega contagem real de produtos via /api/vehicle-selector/brands
    ══════════════════════════════════════════ */
 
@@ -12,11 +22,12 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ChevronLeft, ChevronRight, Pause, Play, Truck } from 'lucide-react';
 import type { VehicleLine, VehicleBrandOption } from '@/lib/search-types';
 
-const AUTOPLAY_MS = 6000;
+const AUTOPLAY_MS = 5000;
 
 interface SlideConfig {
   slug: string;
@@ -25,17 +36,20 @@ interface SlideConfig {
   headline: string;
   subhead: string;
   description: string;
-  /** Cor do gradient da camada de tinta (preto sempre por baixo, esta é a "tinta" sutil) */
+  /** Cor da camada de tinta sobreposta à imagem (blend multiply) — dá identidade à linha */
   tintHex: string;
-  /** Padrão decorativo no canto direito */
-  pattern: 'hex' | 'rail' | 'grid' | 'circuit' | 'diamond';
+  /** Caminho da imagem de fundo em /public/images/hero/ */
+  imageSrc: string;
+  /** Posição focal da imagem (object-position) — onde está o assunto importante */
+  imagePosition: string;
 }
 
 /**
  * Configuração editorial de cada slide.
- * Os números (brandCount, productCount) vêm da API; o resto é fixo aqui.
- * Quando o cliente mandar fotos profissionais, substituir o div decorativo
- * pelo <Image> com a foto, mantendo o overlay escuro.
+ * Imagens em /public/images/hero/ — formato sugerido: JPEG 1920×1080+, qualidade 80%
+ *
+ * IMPORTANTE: imageSrc usa basename sem extensão? NÃO — passar caminho completo.
+ * Se quiser trocar a foto, é só substituir o arquivo mantendo o nome (ou atualizar imageSrc aqui).
  */
 const SLIDE_CONFIGS: Record<string, Omit<SlideConfig, 'slug'>> = {
   rodoviario: {
@@ -46,17 +60,8 @@ const SLIDE_CONFIGS: Record<string, Omit<SlideConfig, 'slug'>> = {
     description:
       'Cobertura completa Volvo, Scania, Mercedes-Benz, DAF, Iveco, MAN, Ford, Volkswagen e Agrale.',
     tintHex: '#0F172A', // azul-aço quase preto
-    pattern: 'rail',
-  },
-  agricola: {
-    label: 'Linha Agrícola',
-    eyebrow: 'Tratores · Colheitadeiras · Pulverizadores',
-    headline: 'Campo\nproduzindo.',
-    subhead: 'Filtros para máquinas que não param na safra.',
-    description:
-      'John Deere, New Holland, Massey Ferguson, Case, Valtra e parceiros do agronegócio.',
-    tintHex: '#0A2818', // verde-musgo bem fechado
-    pattern: 'grid',
+    imageSrc: '/images/hero/rodoviario.jpg',
+    imagePosition: 'center center',
   },
   'maquinas-pesadas': {
     label: 'Linha Máquinas Pesadas',
@@ -65,16 +70,8 @@ const SLIDE_CONFIGS: Record<string, Omit<SlideConfig, 'slug'>> = {
     subhead: 'Filtros para máquinas que enfrentam o impossível.',
     description: 'Caterpillar, Komatsu, JCB, Case Construction e equipamentos fora-de-estrada.',
     tintHex: '#1F1408', // marrom-ocre escuro (terra)
-    pattern: 'hex',
-  },
-  automotivo: {
-    label: 'Linha Automotiva',
-    eyebrow: 'Linha leve · Vans · Pick-ups',
-    headline: 'Estrada\ndo dia a dia.',
-    subhead: 'Filtros para veículos comerciais leves e utilitários.',
-    description: 'Aplicações Mitsubishi, Volkswagen, Ford e demais montadoras da linha leve.',
-    tintHex: '#1A0F1F', // roxo-grafite (urbano)
-    pattern: 'circuit',
+    imageSrc: '/images/hero/maquinas-pesadas.jpg',
+    imagePosition: 'center center',
   },
   industrial: {
     label: 'Linha Industrial',
@@ -83,7 +80,18 @@ const SLIDE_CONFIGS: Record<string, Omit<SlideConfig, 'slug'>> = {
     subhead: 'Filtros para motores estacionários e aplicações industriais.',
     description: 'Cummins, Perkins, MWM, Bosch e motorizações industriais de alta exigência.',
     tintHex: '#1A1A1A', // grafite puro
-    pattern: 'diamond',
+    imageSrc: '/images/hero/industrial.jpg',
+    imagePosition: 'center center',
+  },
+  automotivo: {
+    label: 'Linha Automotiva',
+    eyebrow: 'Linha leve · Vans · Pick-ups',
+    headline: 'Estrada\ndo dia a dia.',
+    subhead: 'Filtros para veículos comerciais leves e utilitários.',
+    description: 'Aplicações Mitsubishi, Volkswagen, Ford e demais montadoras da linha leve.',
+    tintHex: '#1A0F1F', // roxo-grafite (urbano)
+    imageSrc: '/images/hero/automotivo.jpg',
+    imagePosition: 'center center',
   },
 };
 
@@ -191,8 +199,6 @@ export function HeroCarousel({ initialLines }: HeroCarouselProps) {
     <section
       className="bg-brand-black relative w-full overflow-hidden"
       style={{ aspectRatio: '1920 / 750' }}
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
     >
       {/* Slides empilhados, transição via opacity */}
       <AnimatePresence mode="sync">
@@ -201,36 +207,62 @@ export function HeroCarousel({ initialLines }: HeroCarouselProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, ease: 'easeInOut' }}
+          transition={{ duration: 0.8, ease: 'easeInOut' }}
           className="absolute inset-0"
         >
-          {/* Camada 1: tinta de fundo (cor por linha) */}
-          <div
+          {/* Camada 1: imagem de fundo com Ken Burns sutil */}
+          <motion.div
+            key={`img-${current.slug}-${active}`}
+            initial={{ scale: 1 }}
+            animate={{ scale: 1.06 }}
+            transition={{ duration: AUTOPLAY_MS / 1000, ease: 'linear' }}
             className="absolute inset-0"
-            style={{
-              background: `linear-gradient(135deg, ${current.tintHex} 0%, #0A0A0A 70%)`,
-            }}
-          />
+          >
+            <Image
+              src={current.imageSrc}
+              alt={`${current.label} — Original Filter`}
+              fill
+              sizes="100vw"
+              priority={active === 0}
+              className="object-cover"
+              style={{ objectPosition: current.imagePosition }}
+            />
+          </motion.div>
 
-          {/* Camada 2: padrão decorativo (lado direito) */}
-          <PatternLayer pattern={current.pattern} />
-
-          {/* Camada 3: grid blueprint sutil */}
+          {/* Camada 2: tinta de identidade da linha (blend multiply para preservar foto) */}
           <div
-            className="absolute inset-0 opacity-30"
+            className="absolute inset-0 mix-blend-multiply"
             style={{
-              backgroundImage:
-                'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)',
-              backgroundSize: '64px 64px',
+              backgroundColor: current.tintHex,
+              opacity: 0.55,
             }}
           />
 
-          {/* Camada 4: gradient escuro do lado esquerdo (legibilidade do texto) */}
+          {/* Camada 3: gradient escuro do lado esquerdo (legibilidade do texto principal)
+              Técnica Netflix: gradient direcional que cobre o lado do texto sem
+              esconder a foto inteira */}
           <div
             className="absolute inset-0"
             style={{
               background:
-                'linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 45%, transparent 70%)',
+                'linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.65) 35%, rgba(0,0,0,0.25) 60%, rgba(0,0,0,0) 80%)',
+            }}
+          />
+
+          {/* Camada 4: vignette inferior (legibilidade dos controles) */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.65) 100%)',
+            }}
+          />
+
+          {/* Camada 5: noise sutil para textura industrial (opcional, dá granulação) */}
+          <div
+            className="pointer-events-none absolute inset-0 opacity-[0.04] mix-blend-overlay"
+            style={{
+              backgroundImage:
+                "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='0.85'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>\")",
             }}
           />
 
@@ -281,7 +313,10 @@ function SlideContent({
           className="mb-5 flex items-center gap-3"
         >
           <div className="bg-brand-yellow h-px w-8" />
-          <span className="text-brand-yellow font-mono text-[11px] tracking-[0.25em] uppercase">
+          <span
+            className="text-brand-yellow font-mono text-[11px] tracking-[0.25em] uppercase"
+            style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}
+          >
             {slide.label}
           </span>
         </motion.div>
@@ -295,6 +330,7 @@ function SlideContent({
           style={{
             fontSize: 'clamp(2.5rem, 7vw, 5.5rem)',
             letterSpacing: '-0.04em',
+            textShadow: '0 2px 12px rgba(0,0,0,0.5)',
           }}
         >
           {slide.headline}
@@ -305,7 +341,8 @@ function SlideContent({
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.5 }}
-          className="mt-5 max-w-xl text-lg font-light text-white/80 md:text-xl"
+          className="mt-5 max-w-xl text-lg font-light text-white/90 md:text-xl"
+          style={{ textShadow: '0 1px 6px rgba(0,0,0,0.6)' }}
         >
           {slide.subhead}
         </motion.p>
@@ -315,7 +352,8 @@ function SlideContent({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4, duration: 0.5 }}
-          className="mt-3 max-w-xl text-sm leading-relaxed text-white/55 md:text-base"
+          className="mt-3 max-w-xl text-sm leading-relaxed text-white/75 md:text-base"
+          style={{ textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}
         >
           {slide.description}
         </motion.p>
@@ -325,14 +363,15 @@ function SlideContent({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.5 }}
-          className="mt-7 flex items-center gap-5 font-mono text-xs tracking-widest text-white/70 uppercase"
+          className="mt-7 flex items-center gap-5 font-mono text-xs tracking-widest text-white/85 uppercase"
+          style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}
         >
           {brandCount > 0 && (
             <>
               <span>
                 <span className="text-brand-yellow font-bold">{brandCount}</span> montadoras
               </span>
-              <div className="h-3 w-px bg-white/20" />
+              <div className="h-3 w-px bg-white/30" />
             </>
           )}
           {productCount > 0 && (
@@ -356,7 +395,7 @@ function SlideContent({
           </Link>
           <Link
             href="/buscar-por-veiculo"
-            className="font-display inline-flex items-center justify-center gap-2 border border-white/30 px-6 py-3.5 text-sm font-semibold tracking-wide text-white uppercase transition hover:bg-white/10"
+            className="font-display inline-flex items-center justify-center gap-2 border border-white/40 bg-white/5 px-6 py-3.5 text-sm font-semibold tracking-wide text-white uppercase backdrop-blur-sm transition hover:bg-white/15"
             style={{ borderRadius: 'var(--radius-edge)' }}
           >
             <Truck className="size-4" strokeWidth={2} />
@@ -365,93 +404,6 @@ function SlideContent({
         </motion.div>
       </div>
     </div>
-  );
-}
-
-// ══════════════════════════════════════════
-//   Padrão decorativo (lado direito)
-// ══════════════════════════════════════════
-function PatternLayer({ pattern }: { pattern: SlideConfig['pattern'] }) {
-  const common = 'absolute right-0 top-0 bottom-0 w-1/2 opacity-[0.07]';
-
-  if (pattern === 'rail') {
-    return (
-      <div
-        className={common}
-        style={{
-          backgroundImage:
-            'repeating-linear-gradient(90deg, transparent, transparent 60px, #FFFFFF 60px, #FFFFFF 61px)',
-        }}
-      />
-    );
-  }
-  if (pattern === 'grid') {
-    return (
-      <div
-        className={common}
-        style={{
-          backgroundImage:
-            'linear-gradient(#FFFFFF 1px, transparent 1px), linear-gradient(90deg, #FFFFFF 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-        }}
-      />
-    );
-  }
-  if (pattern === 'hex') {
-    return (
-      <svg
-        className={common}
-        xmlns="http://www.w3.org/2000/svg"
-        preserveAspectRatio="xMaxYMid slice"
-      >
-        <defs>
-          <pattern id="hexp" width="60" height="52" patternUnits="userSpaceOnUse">
-            <polygon
-              points="30,3 56,18 56,42 30,57 4,42 4,18"
-              fill="none"
-              stroke="#FFFFFF"
-              strokeWidth="1.5"
-            />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#hexp)" />
-      </svg>
-    );
-  }
-  if (pattern === 'circuit') {
-    return (
-      <svg
-        className={common}
-        xmlns="http://www.w3.org/2000/svg"
-        preserveAspectRatio="xMaxYMid slice"
-      >
-        <defs>
-          <pattern id="cirp" width="80" height="80" patternUnits="userSpaceOnUse">
-            <path
-              d="M0 40 L30 40 L30 10 L60 10 L60 70 L80 70"
-              fill="none"
-              stroke="#FFFFFF"
-              strokeWidth="1.5"
-            />
-            <circle cx="30" cy="40" r="3" fill="#FFFFFF" />
-            <circle cx="60" cy="10" r="3" fill="#FFFFFF" />
-            <circle cx="60" cy="70" r="3" fill="#FFFFFF" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#cirp)" />
-      </svg>
-    );
-  }
-  // diamond
-  return (
-    <svg className={common} xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMid slice">
-      <defs>
-        <pattern id="diap" width="48" height="48" patternUnits="userSpaceOnUse">
-          <path d="M24 0 L48 24 L24 48 L0 24 Z" fill="none" stroke="#FFFFFF" strokeWidth="1" />
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#diap)" />
-    </svg>
   );
 }
 
@@ -497,7 +449,7 @@ function Controls({
                   className={`relative overflow-hidden transition-all duration-300 ${
                     active === i ? 'h-1 w-16' : 'h-0.5 w-8 hover:h-1'
                   }`}
-                  style={{ background: 'rgba(255,255,255,0.25)' }}
+                  style={{ background: 'rgba(255,255,255,0.3)' }}
                 >
                   {active === i && (
                     <div
@@ -511,7 +463,7 @@ function Controls({
                 </div>
               </button>
             ))}
-            <div className="ml-4 hidden items-center gap-2 font-mono text-xs tracking-widest text-white/70 md:flex">
+            <div className="ml-4 hidden items-center gap-2 font-mono text-xs tracking-widest text-white/80 md:flex">
               <span className="text-brand-yellow font-bold">
                 {String(active + 1).padStart(2, '0')}
               </span>
@@ -526,7 +478,7 @@ function Controls({
               type="button"
               onClick={onTogglePause}
               aria-label={isPaused ? 'Continuar autoplay' : 'Pausar autoplay'}
-              className="p-2.5 text-white/70 transition hover:bg-white/10 hover:text-white"
+              className="p-2.5 text-white/80 transition hover:bg-white/10 hover:text-white"
             >
               {isPaused ? <Play className="size-4" /> : <Pause className="size-4" />}
             </button>
@@ -534,7 +486,7 @@ function Controls({
               type="button"
               onClick={onPrev}
               aria-label="Slide anterior"
-              className="p-2.5 text-white/70 transition hover:bg-white/10 hover:text-white"
+              className="p-2.5 text-white/80 transition hover:bg-white/10 hover:text-white"
             >
               <ChevronLeft className="size-4" />
             </button>
@@ -542,7 +494,7 @@ function Controls({
               type="button"
               onClick={onNext}
               aria-label="Próximo slide"
-              className="p-2.5 text-white/70 transition hover:bg-white/10 hover:text-white"
+              className="p-2.5 text-white/80 transition hover:bg-white/10 hover:text-white"
             >
               <ChevronRight className="size-4" />
             </button>
