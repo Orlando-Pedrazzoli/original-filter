@@ -4,13 +4,24 @@
    Faixa preta com 4 KPIs do catálogo.
    Consome /api/stats e exibe os números reais do banco.
    Estilo: tipografia gigante, mono para labels (estilo painel técnico).
+
+   Best practices aplicadas ao count-up:
+   - Dispara SOMENTE quando entra no viewport (useInView, once).
+   - tabular-nums: dígitos de largura fixa → sem tremor horizontal na subida.
+   - prefers-reduced-motion: mostra o valor final direto, sem animar.
+   - a11y: a versão animada é aria-hidden (não polui o leitor de tela a cada
+     frame); o valor final + contexto vão num texto sr-only lido uma única vez.
+   - stagger sutil entre os KPIs (delay por índice).
    ══════════════════════════════════════════ */
 
 'use client';
 
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import type { CatalogStats } from '@/lib/search-types';
+
+const COUNT_DURATION_MS = 1400;
+const STAGGER_MS = 120; // atraso entre o início de cada KPI
 
 interface StatItem {
   label: string;
@@ -105,6 +116,10 @@ export function StatsBand() {
 }
 
 function Stat({ item, index }: { item: StatItem; index: number }) {
+  const formatted = item.value.toLocaleString('pt-BR');
+  // Texto único e completo p/ o leitor de tela (valor final + contexto).
+  const accessibleText = `${item.label}: ${formatted}${item.suffix ?? ''}. ${item.caption}.`;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -113,51 +128,83 @@ function Stat({ item, index }: { item: StatItem; index: number }) {
       transition={{ duration: 0.6, delay: index * 0.08 }}
       className="relative"
     >
-      {/* Faixa amarela vertical à esquerda */}
-      <div className="bg-brand-yellow absolute top-2 bottom-2 left-0 w-0.5 opacity-80" />
+      {/* Lido pelo leitor de tela uma única vez — sem o spam da contagem */}
+      <span className="sr-only">{accessibleText}</span>
 
-      <div className="pl-4 md:pl-5">
-        <div className="mb-2 font-mono text-[10px] tracking-[0.22em] text-white/50 uppercase md:text-[11px]">
-          {item.label}
+      {/* Camada visual — invisível ao SR para não anunciar cada frame da subida */}
+      <div aria-hidden="true">
+        {/* Faixa amarela vertical à esquerda */}
+        <div className="bg-brand-yellow absolute top-2 bottom-2 left-0 w-0.5 opacity-80" />
+
+        <div className="pl-4 md:pl-5">
+          <div className="mb-2 font-mono text-[10px] tracking-[0.22em] text-white/50 uppercase md:text-[11px]">
+            {item.label}
+          </div>
+          <div
+            className="font-display leading-none font-black text-white"
+            style={{
+              fontSize: 'clamp(2.75rem, 6vw, 4.5rem)',
+              letterSpacing: '-0.04em',
+            }}
+          >
+            <CountUp to={item.value} delay={index * STAGGER_MS} />
+            {item.suffix && <span className="text-brand-yellow ml-0.5">{item.suffix}</span>}
+          </div>
+          <div className="mt-2 max-w-[14rem] text-xs text-white/60 md:text-sm">{item.caption}</div>
         </div>
-        <div
-          className="font-display leading-none font-black text-white"
-          style={{
-            fontSize: 'clamp(2.75rem, 6vw, 4.5rem)',
-            letterSpacing: '-0.04em',
-          }}
-        >
-          <CountUp to={item.value} />
-          {item.suffix && <span className="text-brand-yellow ml-0.5">{item.suffix}</span>}
-        </div>
-        <div className="mt-2 max-w-[14rem] text-xs text-white/60 md:text-sm">{item.caption}</div>
       </div>
     </motion.div>
   );
 }
 
-/** Animação de contagem (0 → valor real) ao entrar no viewport. */
-function CountUp({ to }: { to: number }) {
+/**
+ * Animação de contagem (0 → valor real).
+ * - Só inicia quando o número entra no viewport (once: true).
+ * - tabular-nums: largura de dígito fixa, sem tremor horizontal na subida.
+ * - Respeita prefers-reduced-motion: pula direto p/ o valor final.
+ * - delay opcional p/ efeito escalonado entre KPIs.
+ */
+function CountUp({ to, delay = 0 }: { to: number; delay?: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  // amount: 0.5 → começa quando metade do número está visível.
+  const inView = useInView(ref, { once: true, amount: 0.5 });
+  const prefersReducedMotion = useReducedMotion();
   const [value, setValue] = useState(0);
 
   useEffect(() => {
-    const duration = 1400;
-    const start = performance.now();
-    let raf: number;
+    if (!inView) return; // segura a animação até o usuário rolar até aqui
 
-    function tick(now: number) {
-      const elapsed = now - start;
-      const t = Math.min(elapsed / duration, 1);
-      // ease-out cubic
-      const eased = 1 - Math.pow(1 - t, 3);
-      setValue(Math.floor(eased * to));
-      if (t < 1) raf = requestAnimationFrame(tick);
-      else setValue(to);
+    // Movimento reduzido: entrega o número final sem animar.
+    if (prefersReducedMotion) {
+      setValue(to);
+      return;
     }
 
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [to]);
+    let raf: number;
+    let startTime: number | null = null;
 
-  return <span>{value.toLocaleString('pt-BR')}</span>;
+    const timeout = setTimeout(() => {
+      function tick(now: number) {
+        if (startTime === null) startTime = now;
+        const elapsed = now - startTime;
+        const t = Math.min(elapsed / COUNT_DURATION_MS, 1);
+        const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
+        setValue(Math.round(eased * to));
+        if (t < 1) raf = requestAnimationFrame(tick);
+        else setValue(to); // trava no valor exato no fim
+      }
+      raf = requestAnimationFrame(tick);
+    }, delay);
+
+    return () => {
+      clearTimeout(timeout);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [inView, to, delay, prefersReducedMotion]);
+
+  return (
+    <span ref={ref} className="tabular-nums">
+      {value.toLocaleString('pt-BR')}
+    </span>
+  );
 }

@@ -4,17 +4,18 @@
    Carrossel principal da homepage com 4 banners (um por linha de veículo).
    Linhas configuradas: Rodoviária, Máquinas Pesadas, Industrial, Automotivo.
    A ordem real de exibição segue o que vem da API /api/vehicle-selector/lines.
-   - Layout 1920×750 (responsivo, mobile: aspect 4/5)
+   - Layout responsivo: desktop 1920×750 / mobile 1066×1476 (retrato)
    - Autoplay 6 segundos
    - Imagens de fundo reais por linha (Unsplash, licença comercial)
    - Best practices aplicadas:
-     * Gradient overlay direcional esquerda → direita (legibilidade do texto)
+     * Art direction: imagem landscape no desktop, retrato no mobile (imageSrcMobile)
+     * Gradient overlay direcional (desktop) + gradient vertical (mobile) p/ legibilidade
      * Vignette inferior (legibilidade dos controles)
      * Camada de cor (tintHex) com blend-mode multiply para identidade visual
      * Ken Burns sutil (zoom 1.0 → 1.05 ao longo do autoplay)
      * Tipografia mantida em Archivo Black, alto contraste
      * Padrões decorativos removidos (foto real substitui)
-   - Mobile: imagem ocupa fundo inteiro, gradient cobre todo o slide
+   - Mobile: imagem retrato ocupa fundo inteiro, gradient vertical cobre todo o slide
    - Cada slide carrega contagem real de produtos via /api/vehicle-selector/brands
    ══════════════════════════════════════════ */
 
@@ -38,18 +39,21 @@ interface SlideConfig {
   description: string;
   /** Cor da camada de tinta sobreposta à imagem (blend multiply) — dá identidade à linha */
   tintHex: string;
-  /** Caminho da imagem de fundo em /public/images/hero/ */
+  /** Caminho da imagem de fundo DESKTOP em /public/images/hero/ (landscape, 1920×750+) */
   imageSrc: string;
+  /** Caminho da imagem de fundo MOBILE em /public/images/hero/ (retrato, 1066×1476) */
+  imageSrcMobile: string;
   /** Posição focal da imagem (object-position) — onde está o assunto importante */
   imagePosition: string;
 }
 
 /**
  * Configuração editorial de cada slide.
- * Imagens em /public/images/hero/ — formato sugerido: JPEG 1920×1080+, qualidade 80%
+ * Imagens em /public/images/hero/
+ *   - Desktop (landscape): nome.jpg          — sugerido JPEG 1920×750+, qualidade 80%
+ *   - Mobile  (retrato):   nome-mobile.jpg   — 1066×1476
  *
- * IMPORTANTE: imageSrc usa basename sem extensão? NÃO — passar caminho completo.
- * Se quiser trocar a foto, é só substituir o arquivo mantendo o nome (ou atualizar imageSrc aqui).
+ * Pra trocar a foto, substitua o arquivo mantendo o nome (ou atualize imageSrc/imageSrcMobile aqui).
  */
 const SLIDE_CONFIGS: Record<string, Omit<SlideConfig, 'slug'>> = {
   rodoviario: {
@@ -61,6 +65,7 @@ const SLIDE_CONFIGS: Record<string, Omit<SlideConfig, 'slug'>> = {
       'Cobertura completa Volvo, Scania, Mercedes-Benz, DAF, Iveco, MAN, Ford, Volkswagen e Agrale.',
     tintHex: '#0F172A', // azul-aço quase preto
     imageSrc: '/images/hero/rodoviario.jpg',
+    imageSrcMobile: '/images/hero/rodoviario-mobile.jpg',
     imagePosition: 'center center',
   },
   'maquinas-pesadas': {
@@ -71,6 +76,7 @@ const SLIDE_CONFIGS: Record<string, Omit<SlideConfig, 'slug'>> = {
     description: 'Caterpillar, Komatsu, JCB, Case Construction e equipamentos fora-de-estrada.',
     tintHex: '#1F1408', // marrom-ocre escuro (terra)
     imageSrc: '/images/hero/maquinas-pesadas.jpg',
+    imageSrcMobile: '/images/hero/maquinas-pesadas-mobile.jpg',
     imagePosition: 'center center',
   },
   industrial: {
@@ -81,6 +87,7 @@ const SLIDE_CONFIGS: Record<string, Omit<SlideConfig, 'slug'>> = {
     description: 'Cummins, Perkins, MWM, Bosch e motorizações industriais de alta exigência.',
     tintHex: '#1A1A1A', // grafite puro
     imageSrc: '/images/hero/industrial.jpg',
+    imageSrcMobile: '/images/hero/industrial-mobile.jpg',
     imagePosition: 'center center',
   },
   automotivo: {
@@ -91,6 +98,7 @@ const SLIDE_CONFIGS: Record<string, Omit<SlideConfig, 'slug'>> = {
     description: 'Aplicações Mitsubishi, Volkswagen, Ford e demais montadoras da linha leve.',
     tintHex: '#1A0F1F', // roxo-grafite (urbano)
     imageSrc: '/images/hero/automotivo.jpg',
+    imageSrcMobile: '/images/hero/automotivo-mobile.jpg',
     imagePosition: 'center center',
   },
 };
@@ -196,10 +204,7 @@ export function HeroCarousel({ initialLines }: HeroCarouselProps) {
   const brandCount = lines.find((l) => l.slug === current.slug)?.brandCount ?? 0;
 
   return (
-    <section
-      className="bg-brand-black relative w-full overflow-hidden"
-      style={{ aspectRatio: '1920 / 750' }}
-    >
+    <section className="bg-brand-black relative aspect-[1066/1476] w-full overflow-hidden md:aspect-[1920/750]">
       {/* Slides empilhados, transição via opacity */}
       <AnimatePresence mode="sync">
         <motion.div
@@ -210,7 +215,8 @@ export function HeroCarousel({ initialLines }: HeroCarouselProps) {
           transition={{ duration: 0.8, ease: 'easeInOut' }}
           className="absolute inset-0"
         >
-          {/* Camada 1: imagem de fundo com Ken Burns sutil */}
+          {/* Camada 1: imagem de fundo com Ken Burns sutil.
+              Art direction: landscape no desktop, retrato no mobile. */}
           <motion.div
             key={`img-${current.slug}-${active}`}
             initial={{ scale: 1 }}
@@ -218,13 +224,24 @@ export function HeroCarousel({ initialLines }: HeroCarouselProps) {
             transition={{ duration: AUTOPLAY_MS / 1000, ease: 'linear' }}
             className="absolute inset-0"
           >
+            {/* Desktop (1920×750) */}
             <Image
               src={current.imageSrc}
               alt={`${current.label} — Original Filter`}
               fill
               sizes="100vw"
               priority={active === 0}
-              className="object-cover"
+              className="hidden object-cover md:block"
+              style={{ objectPosition: current.imagePosition }}
+            />
+            {/* Mobile (1066×1476 — retrato) */}
+            <Image
+              src={current.imageSrcMobile}
+              alt={`${current.label} — Original Filter`}
+              fill
+              sizes="100vw"
+              priority={active === 0}
+              className="object-cover md:hidden"
               style={{ objectPosition: current.imagePosition }}
             />
           </motion.div>
@@ -238,14 +255,23 @@ export function HeroCarousel({ initialLines }: HeroCarouselProps) {
             }}
           />
 
-          {/* Camada 3: gradient escuro do lado esquerdo (legibilidade do texto principal)
-              Técnica Netflix: gradient direcional que cobre o lado do texto sem
-              esconder a foto inteira */}
+          {/* Camada 3a (desktop): gradient direcional esquerda → direita.
+              Técnica Netflix: cobre o lado do texto sem esconder a foto inteira. */}
           <div
-            className="absolute inset-0"
+            className="absolute inset-0 hidden md:block"
             style={{
               background:
                 'linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.65) 35%, rgba(0,0,0,0.25) 60%, rgba(0,0,0,0) 80%)',
+            }}
+          />
+
+          {/* Camada 3b (mobile): gradient vertical — escurece topo e base reforçada,
+              garantindo leitura do texto centralizado sobre a foto retrato. */}
+          <div
+            className="absolute inset-0 md:hidden"
+            style={{
+              background:
+                'linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.30) 28%, rgba(0,0,0,0.48) 62%, rgba(0,0,0,0.88) 100%)',
             }}
           />
 
@@ -510,10 +536,7 @@ function Controls({
 // ══════════════════════════════════════════
 function HeroSkeleton() {
   return (
-    <section
-      className="bg-brand-black relative w-full overflow-hidden"
-      style={{ aspectRatio: '1920 / 750' }}
-    >
+    <section className="bg-brand-black relative aspect-[1066/1476] w-full overflow-hidden md:aspect-[1920/750]">
       <div className="bg-brand-yellow absolute top-0 bottom-0 left-0 w-1" />
       <div className="mx-auto flex h-full max-w-7xl items-center px-4 md:px-12 lg:px-16">
         <div className="w-full max-w-3xl">

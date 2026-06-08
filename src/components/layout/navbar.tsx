@@ -39,12 +39,21 @@ const EMPRESA_LINKS = [
 ];
 
 // ─── Links principais (sem "Quem somos" — foi para o dropdown EMPRESA) ───
-const NAV_LINKS = [
+type NavLink = {
+  label: string;
+  href: string;
+  highlight?: boolean;
+  /** Cor do quadradinho pulsante: amarelo (revendedor) ou verde (fale conosco) */
+  dot?: 'yellow' | 'green';
+};
+
+const NAV_LINKS: NavLink[] = [
   { label: 'Catálogo', href: '/produtos' },
   { label: 'Por veículo', href: '/buscar-por-veiculo' },
   { label: 'Cross-Reference', href: '/cross-reference' },
   { label: 'Lançamentos', href: '/lancamentos' },
-  { label: 'Seja revendedor', href: '/seja-revendedor', highlight: true },
+  { label: 'Seja revendedor', href: '/seja-revendedor', highlight: true, dot: 'yellow' },
+  { label: 'Fale conosco', href: '/contato', highlight: true, dot: 'green' },
 ];
 
 export function Navbar() {
@@ -64,6 +73,16 @@ export function Navbar() {
     };
   }, [mobileOpen]);
 
+  // Logo: na home, rola suavemente até o topo (respeitando reduce-motion);
+  // em outras rotas, o Link navega p/ "/" e o Next já posiciona no topo.
+  function handleLogoClick(e: React.MouseEvent<HTMLAnchorElement>) {
+    if (pathname === '/') {
+      e.preventDefault();
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: prefersReduced ? 'auto' : 'smooth' });
+    }
+  }
+
   return (
     <header className="sticky top-0 z-50 bg-white">
       {/* ─── Topbar institucional ─── */}
@@ -76,6 +95,7 @@ export function Navbar() {
             {/* Logo grande + tagline embaixo */}
             <Link
               href="/"
+              onClick={handleLogoClick}
               className="group flex shrink-0 flex-col items-start gap-1"
               aria-label="Original Filter — Página inicial"
             >
@@ -166,7 +186,13 @@ export function Navbar() {
                     }`}
                   >
                     {link.highlight && (
-                      <span className="bg-brand-yellow animate-pulse-yellow mr-2 size-1.5" />
+                      <span
+                        className={`mr-2 size-1.5 ${
+                          link.dot === 'green'
+                            ? 'bg-success animate-pulse-green'
+                            : 'bg-brand-yellow animate-pulse-yellow'
+                        }`}
+                      />
                     )}
                     {link.label}
                     {active && (

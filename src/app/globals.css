@@ -53,6 +53,9 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    /* Bloqueia scroll lateral (mobile) sem quebrar position: sticky.
+       overflow-x: clip não cria contexto de scroll, ao contrário de hidden. */
+    overflow-x: clip;
   }
 
   body {
@@ -60,6 +63,9 @@
     background: var(--color-brand-snow);
     color: var(--color-brand-black);
     font-feature-settings: 'ss01', 'cv11';
+    /* Reforço anti scroll-lateral: nada deve estourar a largura da viewport */
+    overflow-x: clip;
+    max-width: 100%;
   }
 
   /* Headings em Archivo */
@@ -270,6 +276,25 @@
   .of-scroll::-webkit-scrollbar-thumb:hover {
     background: var(--color-brand-steel);
   }
+
+  /* ─── Marquee de marcas (BrandsCarousel) ───
+     Desktop (hover): faixa rola sozinha, pausa no hover/foco/press.
+     Touch (hover:none): vira strip arrastável com scroll-snap, sem auto-movimento.
+     prefers-reduced-motion: animação desligada, conteúdo rolável. */
+  .of-marquee-viewport {
+    overflow: hidden;
+  }
+  .of-marquee-track {
+    display: flex;
+    width: max-content;
+    animation: of-marquee 45s linear infinite;
+    will-change: transform;
+  }
+  .of-marquee:hover .of-marquee-track,
+  .of-marquee:focus-within .of-marquee-track,
+  .of-marquee-track:has(a:active) {
+    animation-play-state: paused;
+  }
 }
 
 /* ══════════════════════════════════════════
@@ -307,6 +332,17 @@
   }
 }
 
+/* Pulso verde — usado no link "Fale conosco" (cor do token --color-success) */
+@keyframes of-pulse-green {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(22, 163, 74, 0);
+  }
+}
+
 .animate-fade-up {
   animation: of-fade-up 0.5s ease-out backwards;
 }
@@ -315,4 +351,31 @@
 }
 .animate-pulse-yellow {
   animation: of-pulse-yellow 2s ease-out infinite;
+}
+.animate-pulse-green {
+  animation: of-pulse-green 2s ease-out infinite;
+}
+
+@keyframes of-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ══════════════════════════════════════════
+   ACESSIBILIDADE — movimento reduzido
+   ──────────────────────────────────────────
+   Desliga o auto-loop do marquee e o deixa rolável.
+   (Os pulsos amarelo/verde são intencionalmente mantidos.)
+   ══════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .of-marquee-track {
+    animation: none;
+  }
+  .of-marquee-viewport {
+    overflow-x: auto;
+  }
 }
