@@ -25,8 +25,8 @@ export const BRAND = {
 export const CONTACT = {
   phone: '+55 11 4613-3454',
   phoneRaw: '+551146133454',
-  whatsapp: '+5511461334554',
-  whatsappLink: 'https://wa.me/5511461334554',
+  whatsapp: '+551146133454',
+  whatsappLink: 'https://wa.me/551146133454',
   sac: '0800 778 2000',
   sacRaw: '08007782000',
   email: 'contato@originalfilter.com',
