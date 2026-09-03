@@ -1,3 +1,4 @@
+// src/app/(site)/produtos/[slug]/page.tsx
 /* ══════════════════════════════════════════
    /produtos/[slug] — Detalhe do produto
    ──────────────────────────────────────────
@@ -25,7 +26,7 @@ import { ProductGallery } from '@/components/product-detail/product-gallery';
 import { ProductInfo } from '@/components/product-detail/product-info';
 import { ProductSpecs } from '@/components/product-detail/product-specs';
 import { ProductApplications } from '@/components/product-detail/product-applications';
-import { ProductOemCodes } from '@/components/product-detail/product-oem-codes';
+import { ProductCrossReferences } from '@/components/product-detail/product-cross-references';
 import { RelatedProducts } from '@/components/product-detail/related-products';
 import { cleanProductTitle } from '@/utils/format';
 
@@ -61,6 +62,7 @@ interface ProductData {
   dimensions: { height: number; width: number; depth: number };
   applications: ProductApplication[];
   oemCodes: string[];
+  crossReferences: { brand: string; code: string; codeNormalized: string }[];
   status: string;
   isPatented: boolean;
   isNewRelease: boolean;
@@ -153,8 +155,34 @@ export default async function ProductDetailPage({ params }: PageParams) {
 
   const cleanTitle = cleanProductTitle(product.title, product.sku);
 
+  // JSON-LD Product — cada código equivalente vira propriedade indexável
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: cleanTitle || product.title,
+    sku: product.sku,
+    mpn: product.sku,
+    brand: { '@type': 'Brand', name: 'Original Filter' },
+    category: product.category.replace(/-/g, ' '),
+    ...(product.images?.[0]?.url ? { image: product.images[0].url } : {}),
+    description: product.shortDescription || product.description?.slice(0, 300) || undefined,
+    ...(product.crossReferences?.length
+      ? {
+          additionalProperty: product.crossReferences.map((ref) => ({
+            '@type': 'PropertyValue',
+            name: `Referência ${ref.brand}`,
+            value: ref.code,
+          })),
+        }
+      : {}),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* ─── Breadcrumb + back link ─── */}
       <div className="bg-brand-snow border-brand-mist border-b">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 md:px-12">
@@ -271,8 +299,12 @@ export default async function ProductDetailPage({ params }: PageParams) {
         </div>
       </section>
 
-      {/* ─── Códigos OEM (cross-reference reverso) ─── */}
-      <ProductOemCodes oemCodes={product.oemCodes ?? []} productSku={product.sku} />
+      {/* ─── Referências cruzadas (tabela de conversões por marca) ─── */}
+      <ProductCrossReferences
+        crossReferences={product.crossReferences ?? []}
+        oemCodes={product.oemCodes ?? []}
+        productSku={product.sku}
+      />
 
       {/* ─── Produtos relacionados ─── */}
       <RelatedProducts category={product.category} currentSlug={product.slug} />
