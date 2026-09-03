@@ -1,3 +1,4 @@
+// src/models/Product.ts
 /* ══════════════════════════════════════════
    Original Filter — Model Product
    ══════════════════════════════════════════
@@ -22,6 +23,7 @@ import type {
   ProductType,
   ProductStatus,
   ProductApplication,
+  ProductCrossReference,
   ProductImage,
   ProductDimensions,
   ProductSEO,
@@ -52,6 +54,7 @@ export interface IProduct extends Document {
 
   // Equivalências
   oemCodes: string[];
+  crossReferences: ProductCrossReference[];
   replacedBy?: mongoose.Types.ObjectId;
   supersedes: mongoose.Types.ObjectId[];
 
@@ -86,6 +89,19 @@ const ApplicationSchema = new Schema<ProductApplication>(
     engine: { type: String, trim: true },
     yearStart: { type: Number, min: 1950, max: 2100 },
     yearEnd: { type: Number, min: 1950, max: 2100 },
+  },
+  { _id: false },
+);
+
+const CrossReferenceSchema = new Schema<ProductCrossReference>(
+  {
+    // Marca do fabricante da referência (ex: MANN FILTER, FLEETGUARD, VOLVO)
+    // 'NÚMERO ORIGINAL' = código OEM sem marca atribuída (era 'Part Number' na planilha)
+    brand: { type: String, required: true, trim: true, uppercase: true },
+    // Código como exibido ao usuário (preserva formato original: W 1170, PU10022Z...)
+    code: { type: String, required: true, trim: true },
+    // Código normalizado para busca: uppercase, sem espaços/hífens/pontos/barras
+    codeNormalized: { type: String, required: true, trim: true, uppercase: true },
   },
   { _id: false },
 );
@@ -164,6 +180,7 @@ const ProductSchema = new Schema<IProduct>(
     applications: { type: [ApplicationSchema], default: [] },
 
     oemCodes: { type: [String], default: [] },
+    crossReferences: { type: [CrossReferenceSchema], default: [] },
     replacedBy: { type: Schema.Types.ObjectId, ref: 'Product' },
     supersedes: { type: [Schema.Types.ObjectId], ref: 'Product', default: [] },
 
@@ -220,14 +237,14 @@ ProductSchema.pre('save', function () {
 });
 
 // ─── Índices ───
-ProductSchema.index({ sku: 1 }, { unique: true });
-ProductSchema.index({ slug: 1 }, { unique: true });
 ProductSchema.index({ productType: 1, status: 1 });
 ProductSchema.index({ category: 1, status: 1 });
 ProductSchema.index({ brand: 1, status: 1 });
 ProductSchema.index({ status: 1, isFeatured: 1 });
 ProductSchema.index({ status: 1, isNewRelease: 1 });
 ProductSchema.index({ oemCodes: 1 });
+ProductSchema.index({ 'crossReferences.codeNormalized': 1 });
+ProductSchema.index({ 'crossReferences.brand': 1 });
 ProductSchema.index({ 'applications.brand': 1, 'applications.model': 1 });
 
 // ─── Text index para busca textual ───

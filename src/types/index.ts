@@ -62,6 +62,12 @@ export interface ProductSEO {
   keywords?: string[];
 }
 
+export interface ProductCrossReference {
+  brand: string; // fabricante da referência (MANN FILTER, VOLVO, NÚMERO ORIGINAL...)
+  code: string; // código como exibido (preserva grafia original)
+  codeNormalized: string; // uppercase sem separadores — usado na busca
+}
+
 // ─── Pedido ──────────────────────────────────────────────
 export type PaymentStatus =
   | 'pending'

@@ -1,3 +1,4 @@
+// src/app/api/products/route.ts
 /* ══════════════════════════════════════════
    Original Filter — API /api/products
    ══════════════════════════════════════════
@@ -31,6 +32,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import Product from '@/models/Product';
 import { auth } from '@/lib/auth';
+import { normalizeCode } from '@/lib/code-normalize';
 import { PAGINATION } from '@/lib/constants';
 import type { DiscountTier, UserRole } from '@/types';
 
@@ -158,9 +160,20 @@ export async function GET(req: NextRequest) {
 
     // Busca textual
     if (q) {
-      // Se for SKU exato (formato OFxxxx), match direto
-      if (/^OF[A-Z]\d/i.test(q)) {
-        filter.sku = q.toUpperCase();
+      const nq = normalizeCode(q);
+
+      if (/^OF[A-Z]\d/.test(nq)) {
+        // SKU Original Filter — aceita grafias com espaços/hífens (ofa-2023-c)
+        filter.sku = { $in: [q.toUpperCase(), nq] };
+      } else if (/^[A-Z0-9]{3,}$/.test(nq)) {
+        // Pode ser código de concorrente/OEM (ff-5863, W 1170, PU10022Z...)
+        // Tenta o match cruzado primeiro; se nada, cai na busca textual.
+        const oemHits = await Product.countDocuments({ ...filter, oemCodes: nq });
+        if (oemHits > 0) {
+          filter.oemCodes = nq;
+        } else {
+          filter.$text = { $search: q };
+        }
       } else {
         filter.$text = { $search: q };
       }
