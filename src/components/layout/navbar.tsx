@@ -148,7 +148,7 @@ export function Navbar() {
           >
             <div className="relative h-14 w-36 sm:h-16 sm:w-44 lg:h-[76px] lg:w-52">
               <Image
-                src="/images/logo-originalfilter2.png"
+                src="/images/logo-of-header.png"
                 alt="Original Filter"
                 fill
                 sizes="(min-width: 1024px) 208px, (min-width: 640px) 176px, 144px"
