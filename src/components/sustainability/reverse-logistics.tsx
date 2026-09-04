@@ -1,3 +1,4 @@
+// src/components/sustainability/reverse-logistics.tsx
 /* ══════════════════════════════════════════
    ReverseLogistics — Original Filter
    ──────────────────────────────────────────
@@ -10,6 +11,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { O_PATTERN_DARK } from '@/lib/brand-pattern';
 import {
   Recycle,
   PackageOpen,
@@ -77,14 +79,7 @@ export function ReverseLogistics() {
   return (
     <section className="bg-brand-black relative overflow-hidden py-16 text-white md:py-24">
       {/* Grid blueprint sutil */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.04]"
-        style={{
-          backgroundImage:
-            'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-        }}
-      />
+      <div aria-hidden className="pointer-events-none absolute inset-0" style={O_PATTERN_DARK} />
 
       <div className="relative mx-auto max-w-7xl px-4 md:px-12">
         {/* Header */}

@@ -1,3 +1,4 @@
+// src/app/api/stats/route.ts
 /* ══════════════════════════════════════════
    GET /api/stats
    ──────────────────────────────────────────
@@ -30,6 +31,7 @@ export async function GET() {
       totalBrands,
       categoryAgg,
       applicationAgg,
+      crossRefAgg,
     ] = await Promise.all([
       Product.countDocuments({}),
       Product.countDocuments({ status: 'active' }),
@@ -48,7 +50,16 @@ export async function GET() {
         { $project: { count: { $size: { $ifNull: ['$applications', []] } } } },
         { $group: { _id: null, total: { $sum: '$count' } } },
       ]),
+      Product.aggregate<{ _id: string; count: number }>([
+        { $match: { status: 'active' } },
+        { $unwind: '$crossReferences' },
+        { $group: { _id: '$crossReferences.brand', count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+      ]),
     ]);
+
+    // 'NÚMERO ORIGINAL' agrega códigos OEM sem marca — não conta como marca
+    const namedBrands = crossRefAgg.filter((b) => b._id !== 'NÚMERO ORIGINAL');
 
     const stats: CatalogStats = {
       totalProducts,
@@ -58,6 +69,9 @@ export async function GET() {
       totalBrands,
       categoryCount: categoryAgg.length,
       totalApplications: applicationAgg[0]?.total ?? 0,
+      totalCrossReferences: crossRefAgg.reduce((n, b) => n + b.count, 0),
+      equivalenceBrandCount: namedBrands.length,
+      topEquivalenceBrands: namedBrands.slice(0, 18).map((b) => ({ name: b._id, count: b.count })),
     };
 
     return NextResponse.json(stats, {

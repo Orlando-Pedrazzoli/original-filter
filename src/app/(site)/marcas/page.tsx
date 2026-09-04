@@ -1,3 +1,4 @@
+// src/app/(site)/marcas/page.tsx
 /* ══════════════════════════════════════════
    /marcas — Índice de todas as marcas
    ──────────────────────────────────────────
@@ -15,6 +16,7 @@ import Brand from '@/models/Brand';
 import Product from '@/models/Product';
 import { BrandCard, type BrandCardData } from '@/components/brands/brand-card';
 import { PageHero } from '@/components/shared/page-hero';
+import { O_PATTERN_DARK } from '@/lib/brand-pattern';
 
 export const metadata: Metadata = {
   title: 'Marcas — Original Filter',
@@ -236,14 +238,7 @@ export default async function MarcasIndexPage() {
 
       {/* ─── CTA final ─── */}
       <section className="bg-brand-black relative overflow-hidden py-16 text-white md:py-20">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.05]"
-          style={{
-            backgroundImage:
-              'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
-        />
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={O_PATTERN_DARK} />
         <div className="relative mx-auto max-w-4xl px-4 text-center md:px-12">
           <div className="mb-4 flex items-center justify-center gap-3">
             <div className="bg-brand-yellow h-px w-8" />

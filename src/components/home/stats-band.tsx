@@ -1,3 +1,4 @@
+// src/components/home/stats-band.tsx
 /* ══════════════════════════════════════════
    StatsBand — Original Filter
    ──────────────────────────────────────────
@@ -19,6 +20,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 import type { CatalogStats } from '@/lib/search-types';
+import { O_PATTERN_DARK } from '@/lib/brand-pattern';
 
 const COUNT_DURATION_MS = 1400;
 const STAGGER_MS = 120; // atraso entre o início de cada KPI
@@ -63,33 +65,27 @@ export function StatsBand() {
       caption: 'no catálogo ativo',
     },
     {
+      label: 'Referências',
+      // ?? 0: tolera resposta antiga da API ainda em cache no navegador
+      value: stats.totalCrossReferences ?? 0,
+      caption: 'códigos equivalentes cruzados',
+    },
+    {
+      label: 'Marcas',
+      value: stats.equivalenceBrandCount ?? 0,
+      caption: 'fabricantes com equivalência',
+    },
+    {
       label: 'Aplicações',
       value: stats.totalApplications,
       caption: 'marca · modelo · motor · ano',
-    },
-    {
-      label: 'Montadoras',
-      value: stats.totalBrands,
-      caption: 'rodoviárias, agrícolas, máquinas',
-    },
-    {
-      label: 'Patenteados',
-      value: stats.patentedProducts,
-      caption: 'tecnologia exclusiva',
     },
   ];
 
   return (
     <section className="bg-brand-black relative overflow-hidden py-14 text-white md:py-20">
       {/* Grid blueprint sutil */}
-      <div
-        className="absolute inset-0 opacity-[0.04]"
-        style={{
-          backgroundImage:
-            'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-        }}
-      />
+      <div aria-hidden className="absolute inset-0" style={O_PATTERN_DARK} />
 
       <div className="relative mx-auto max-w-7xl px-4 md:px-12">
         <motion.div

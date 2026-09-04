@@ -1,3 +1,4 @@
+// src/app/(site)/cross-reference/page.tsx
 /* ══════════════════════════════════════════
    /cross-reference — Conversor de Filtros
    ──────────────────────────────────────────
@@ -29,6 +30,7 @@ import { PageHero } from '@/components/shared/page-hero';
 import { EmptyState } from '@/components/shared/empty-state';
 import { CrossRefResults } from '@/components/cross-reference/cross-ref-results';
 import type { CrossRefResponse } from '@/lib/search-types';
+import { O_PATTERN_DARK } from '@/lib/brand-pattern';
 
 const SUPPORTED_BRANDS = [
   'Mann',
@@ -323,14 +325,7 @@ function StepCard({ step, index }: { step: (typeof STEPS)[number]; index: number
 function HelpCTA() {
   return (
     <section className="bg-brand-black relative overflow-hidden py-16 text-white md:py-20">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.05]"
-        style={{
-          backgroundImage:
-            'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-        }}
-      />
+      <div aria-hidden className="pointer-events-none absolute inset-0" style={O_PATTERN_DARK} />
 
       <div className="relative mx-auto max-w-7xl px-4 md:px-12">
         <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2">

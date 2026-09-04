@@ -1,3 +1,4 @@
+// src/components/home/product-lines.tsx
 /* ══════════════════════════════════════════
    ProductLines — Original Filter
    ──────────────────────────────────────────
@@ -13,6 +14,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, Truck, Sprout, Mountain, Car, Factory } from 'lucide-react';
 import type { VehicleLine } from '@/lib/search-types';
+import { O_PATTERN_LIGHT } from '@/lib/brand-pattern';
 
 const LINE_ICONS: Record<string, React.ElementType> = {
   rodoviario: Truck,
@@ -41,7 +43,7 @@ export function ProductLines() {
   }, []);
 
   return (
-    <section className="bg-brand-snow py-20 md:py-28">
+    <section className="bg-brand-snow py-20 md:py-28" style={O_PATTERN_LIGHT}>
       <div className="mx-auto max-w-7xl px-4 md:px-12">
         {/* Cabeçalho de seção */}
         <div className="mb-12 flex flex-col justify-between gap-6 md:mb-16 md:flex-row md:items-end">

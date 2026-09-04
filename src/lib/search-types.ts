@@ -1,3 +1,4 @@
+// src/lib/search-types.ts
 /* ══════════════════════════════════════════
    Original Filter — Tipos do Sistema de Busca
    ══════════════════════════════════════════
@@ -124,4 +125,10 @@ export interface CatalogStats {
   patentedProducts: number;
   categoryCount: number;
   productsWithImage: number;
+  /** Total de referências cruzadas importadas (planilha Gabriel). */
+  totalCrossReferences: number;
+  /** Quantidade de marcas distintas nas referências cruzadas. */
+  equivalenceBrandCount: number;
+  /** Marcas de equivalência mais frequentes (para a home). */
+  topEquivalenceBrands: { name: string; count: number }[];
 }

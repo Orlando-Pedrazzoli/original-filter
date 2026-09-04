@@ -1,3 +1,4 @@
+// src/app/(admin-auth)/admin/login/page.tsx
 /* ══════════════════════════════════════════
    /admin/login — Login do painel administrativo
    ──────────────────────────────────────────
@@ -18,6 +19,7 @@ import { ShieldCheck, ArrowLeft, Lock } from 'lucide-react';
 import Image from 'next/image';
 import { auth } from '@/lib/auth';
 import { LoginForm } from './login-form';
+import { O_PATTERN_DARK } from '@/lib/brand-pattern';
 
 export const metadata: Metadata = {
   title: 'Painel Administrativo — Original Filter',
@@ -43,14 +45,7 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
   return (
     <main className="bg-brand-black relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12 text-white">
       {/* Grid blueprint sutil */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.06]"
-        style={{
-          backgroundImage:
-            'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-        }}
-      />
+      <div aria-hidden className="pointer-events-none absolute inset-0" style={O_PATTERN_DARK} />
 
       {/* Faixa amarela vertical no canto esquerdo */}
       <div className="bg-brand-yellow absolute top-0 bottom-0 left-0 hidden w-1 lg:block" />

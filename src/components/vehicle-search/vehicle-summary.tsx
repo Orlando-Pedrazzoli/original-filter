@@ -1,3 +1,4 @@
+// src/components/vehicle-search/vehicle-summary.tsx
 /* ══════════════════════════════════════════
    VehicleSummary — Original Filter
    ──────────────────────────────────────────
@@ -11,6 +12,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { O_PATTERN_DARK } from '@/lib/brand-pattern';
 import {
   Truck,
   RotateCcw,
@@ -58,14 +60,7 @@ export function VehicleSummary({ query, total, byCategory }: VehicleSummaryProps
   return (
     <section className="bg-brand-black relative overflow-hidden text-white">
       {/* Grid blueprint sutil */}
-      <div
-        className="absolute inset-0 opacity-[0.04]"
-        style={{
-          backgroundImage:
-            'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-        }}
-      />
+      <div aria-hidden className="absolute inset-0" style={O_PATTERN_DARK} />
 
       <div className="relative mx-auto max-w-7xl px-4 py-10 md:px-12 md:py-14">
         {/* Header com veículo selecionado */}

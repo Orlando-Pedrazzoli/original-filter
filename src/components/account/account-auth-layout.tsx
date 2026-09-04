@@ -1,3 +1,4 @@
+// src/components/account/account-auth-layout.tsx
 /* ══════════════════════════════════════════
    AccountAuthLayout — Original Filter
    ──────────────────────────────────────────
@@ -12,6 +13,7 @@
 
 import Link from 'next/link';
 import { ArrowLeft, Shield, Truck, Tag } from 'lucide-react';
+import { O_PATTERN_DARK } from '@/lib/brand-pattern';
 
 interface AccountAuthLayoutProps {
   title: string;
@@ -36,14 +38,7 @@ export function AccountAuthLayout({
       {/* ─── Hero lado esquerdo (escondido em mobile) ─── */}
       <aside className="bg-brand-black relative hidden overflow-hidden text-white lg:col-span-5 lg:flex">
         {/* Grid pattern decorativo */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage:
-              'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
-        />
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={O_PATTERN_DARK} />
 
         {/* Faixa amarela vertical */}
         <div className="bg-brand-yellow absolute top-0 bottom-0 left-0 w-1" />

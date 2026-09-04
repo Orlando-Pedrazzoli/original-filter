@@ -1,3 +1,4 @@
+// src/components/home/trust-section.tsx
 /* ══════════════════════════════════════════
    TrustSection — Original Filter
    ──────────────────────────────────────────
@@ -14,6 +15,7 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { FlaskConical, MapPin, Globe, ArrowRight } from 'lucide-react';
+import { O_PATTERN_LIGHT } from '@/lib/brand-pattern';
 
 const PILLARS = [
   {
@@ -42,15 +44,8 @@ const PILLARS = [
 export function TrustSection() {
   return (
     <section className="bg-brand-snow relative overflow-hidden py-20 md:py-28">
-      {/* Grid técnico de fundo */}
-      <div
-        className="absolute inset-0 opacity-[0.04]"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(0,0,0,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.5) 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-        }}
-      />
+      {/* Padrão de "O"s do logotipo (fonte única em lib/brand-pattern) */}
+      <div aria-hidden className="absolute inset-0" style={O_PATTERN_LIGHT} />
 
       <div className="relative mx-auto max-w-7xl px-4 md:px-12">
         {/* Header */}

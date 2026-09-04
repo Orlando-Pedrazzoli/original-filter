@@ -1,3 +1,4 @@
+// src/app/(site)/contato/page.tsx
 /* ══════════════════════════════════════════
    /contato — Página de Contato
    ──────────────────────────────────────────
@@ -17,6 +18,7 @@ import { PageHero } from '@/components/shared/page-hero';
 import { ContactForm } from '@/components/contact/contact-form';
 import { ContactChannels } from '@/components/contact/contact-channels';
 import { CONTACT } from '@/lib/constants';
+import { O_PATTERN_DARK } from '@/lib/brand-pattern';
 
 export const metadata: Metadata = {
   title: 'Contato — Original Filter',
@@ -68,14 +70,7 @@ export default function ContatoPage() {
 
       {/* ─── 2. Big statement preto (telefone gigante) ─── */}
       <section className="bg-brand-black relative overflow-hidden text-white">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage:
-              'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
-        />
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={O_PATTERN_DARK} />
 
         <div className="relative mx-auto max-w-7xl px-4 py-10 md:px-12 md:py-14">
           <div className="grid grid-cols-1 gap-px bg-white/5 md:grid-cols-3">

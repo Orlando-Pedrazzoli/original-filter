@@ -1,3 +1,4 @@
+// src/components/warranty/warranty-coverage.tsx
 /* ══════════════════════════════════════════
    WarrantyCoverage — Original Filter
    ──────────────────────────────────────────
@@ -15,6 +16,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Package, Wrench, ShieldCheck, CheckCircle2, ArrowRight } from 'lucide-react';
 import { CONTACT } from '@/lib/constants';
+import { O_PATTERN_DARK } from '@/lib/brand-pattern';
 
 const COVERAGE_REQUIREMENTS = [
   {
@@ -86,14 +88,7 @@ export function WarrantyCoverage() {
 
       {/* ─── Responsabilidade Total (faixa preta) ─── */}
       <section className="bg-brand-black relative overflow-hidden py-16 text-white md:py-24">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage:
-              'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
-        />
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={O_PATTERN_DARK} />
 
         <div className="relative mx-auto max-w-7xl px-4 md:px-12">
           <motion.div

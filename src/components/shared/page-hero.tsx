@@ -1,3 +1,4 @@
+// src/components/shared/page-hero.tsx
 /* ══════════════════════════════════════════
    PageHero — Original Filter
    ──────────────────────────────────────────
@@ -7,6 +8,7 @@
 
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
+import { O_PATTERN_DARK, O_PATTERN_LIGHT } from '@/lib/brand-pattern';
 
 interface Breadcrumb {
   label: string;
@@ -58,18 +60,11 @@ export function PageHero({
         isDark ? 'bg-brand-black text-white' : 'bg-brand-snow text-brand-black'
       } ${padding}`}
     >
-      {/* Grid técnico */}
+      {/* Padrão de "O"s do logotipo (fonte única em lib/brand-pattern) */}
       <div
+        aria-hidden
         className="pointer-events-none absolute inset-0"
-        style={{
-          opacity: isDark ? 0.04 : 0.05,
-          backgroundImage: `linear-gradient(${
-            isDark ? '#fff' : '#000'
-          } 1px, transparent 1px), linear-gradient(90deg, ${
-            isDark ? '#fff' : '#000'
-          } 1px, transparent 1px)`,
-          backgroundSize: '48px 48px',
-        }}
+        style={isDark ? O_PATTERN_DARK : O_PATTERN_LIGHT}
       />
 
       <div className="relative mx-auto max-w-7xl px-4 md:px-12">

@@ -1,3 +1,4 @@
+// src/app/(site)/produtos/marca/[slug]/page.tsx
 /* ══════════════════════════════════════════
    /produtos/marca/[slug] — Página de marca
    ──────────────────────────────────────────
@@ -31,6 +32,7 @@ import ProductModel from '@/models/Product';
 import { auth } from '@/lib/auth';
 import { ProductCard, type ProductCardData } from '@/components/products/product-card';
 import { CONTACT } from '@/lib/constants';
+import { O_PATTERN_DARK } from '@/lib/brand-pattern';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 300; // ISR 5min
@@ -446,14 +448,7 @@ export default async function BrandPage({ params, searchParams }: PageProps) {
 
       {/* ─── CTA FINAL ─── */}
       <section className="bg-brand-black relative overflow-hidden py-16 text-white md:py-20">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.05]"
-          style={{
-            backgroundImage:
-              'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
-        />
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={O_PATTERN_DARK} />
 
         <div className="relative mx-auto max-w-7xl px-4 md:px-12">
           <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2">

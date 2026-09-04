@@ -1,3 +1,4 @@
+// src/components/layout/footer.tsx
 /* ══════════════════════════════════════════
    Footer — Original Filter
    ──────────────────────────────────────────
@@ -12,6 +13,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Phone, Mail, MapPin, Lock, Headphones, ArrowUpRight, Award } from 'lucide-react';
 import { CONTACT, CERTIFICATIONS } from '@/lib/constants';
+import { O_PATTERN_DARK } from '@/lib/brand-pattern';
 
 function FacebookIcon({ className }: { className?: string }) {
   return (
@@ -69,14 +71,7 @@ export default function Footer() {
       <div className="bg-brand-yellow h-1 w-full" />
 
       {/* Grid blueprint sutil */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage:
-            'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-        }}
-      />
+      <div aria-hidden className="pointer-events-none absolute inset-0" style={O_PATTERN_DARK} />
 
       <div className="relative mx-auto max-w-7xl px-4 md:px-12">
         {/* ══════ 1. Hero statement ══════ */}

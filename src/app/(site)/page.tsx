@@ -1,44 +1,40 @@
+// src/app/(site)/page.tsx
 /* ══════════════════════════════════════════
    Homepage — Original Filter
    ──────────────────────────────────────────
-   Estrutura completa em 8 seções:
-   1. Hero Carousel (5 banners por linha, autoplay 6s)
-   2. Stats Band (KPIs do catálogo)
-   3. Product Lines (cards das 5 linhas)
-   4. Featured Patented (linha patenteada — diferencial)
-   5. Brands Carousel (22 montadoras)
-   6. Cross-Reference Banner (conversor de filtros)
-   7. Trust Section (institucional — Centro P&D, Cotia-SP)
-   8. Reseller CTA (Seja Revendedor)
+   Reformulada (set/2026) com foco em referências cruzadas
+   e aplicações — pedido do Gabriel, benchmark Showlub:
+   1. Hero Search (busca-primeiro, fundo preto contínuo com o navbar)
+   3. Product Lines (cards das linhas)
+   4. Equivalence Brands (top marcas substituídas, dados reais)
+   5. Brands Carousel (montadoras atendidas)
+   6. Trust Section (institucional — Centro P&D, Cotia-SP)
+   7. Reseller CTA (Seja Revendedor)
    ══════════════════════════════════════════ */
 
 import type { Metadata } from 'next';
-import { HeroCarousel } from '@/components/home/hero-carousel';
-import { StatsBand } from '@/components/home/stats-band';
+import { HeroSearch } from '@/components/home/hero-search';
 import { ProductLines } from '@/components/home/product-lines';
-import { FeaturedPatented } from '@/components/home/featured-patented';
+import { EquivalenceBrands } from '@/components/home/equivalence-brands';
 import { BrandsCarousel } from '@/components/home/brands-carousel';
-import { CrossReferenceBanner } from '@/components/home/cross-reference-banner';
 import { TrustSection } from '@/components/home/trust-section';
 import { ResellerCTA } from '@/components/home/reseller-cta';
 
 export const metadata: Metadata = {
   title: 'Original Filter — Qualidade Superior em Filtros Automotivos e Sensores',
   description:
-    'Especialista em filtros automotivos, agrícolas, industriais e fora-de-estrada. ' +
-    'Linha completa de reposição para Volvo, Scania, Mercedes-Benz, DAF, Caterpillar, ' +
-    'John Deere e mais 16 montadoras. Centro de Pesquisa & Desenvolvimento próprio.',
+    'Busque por qualquer código — Original Filter, do concorrente ou original da montadora — ' +
+    'e encontre o filtro equivalente. Mais de 7.000 referências cruzadas de 200+ marcas: ' +
+    'MANN, Fleetguard, Donaldson, Tecfil, Wega, Parker e as principais montadoras.',
 };
 
 export default function HomePage() {
   return (
     <>
-      <HeroCarousel />
-      <StatsBand />
+      <HeroSearch />
       <ProductLines />
-      <FeaturedPatented />
+      <EquivalenceBrands />
       <BrandsCarousel />
-      <CrossReferenceBanner />
       <TrustSection />
       <ResellerCTA />
     </>

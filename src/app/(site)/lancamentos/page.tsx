@@ -1,3 +1,4 @@
+// src/app/(site)/lancamentos/page.tsx
 /* ══════════════════════════════════════════
    /lancamentos — Lançamentos Original Filter
    ──────────────────────────────────────────
@@ -24,6 +25,7 @@ import { LaunchesGrid } from '@/components/launches/launches-grid';
 import { WhySensors } from '@/components/launches/why-sensors';
 import { CONTACT } from '@/lib/constants';
 import type { ProductCardData } from '@/components/products/product-card';
+import { O_PATTERN_DARK } from '@/lib/brand-pattern';
 
 export const metadata: Metadata = {
   title: 'Lançamentos — Original Filter',
@@ -174,14 +176,7 @@ export default async function LancamentosPage() {
 
       {/* ─── 5. CTA final dark ─── */}
       <section className="bg-brand-black relative overflow-hidden py-16 text-white md:py-20">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.05]"
-          style={{
-            backgroundImage:
-              'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
-        />
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={O_PATTERN_DARK} />
 
         <div className="relative mx-auto max-w-7xl px-4 md:px-12">
           <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2">

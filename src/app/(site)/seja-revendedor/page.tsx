@@ -1,3 +1,4 @@
+// src/app/(site)/seja-revendedor/page.tsx
 /* ══════════════════════════════════════════
    /seja-revendedor — Programa de Revendedores
    ──────────────────────────────────────────
@@ -33,6 +34,7 @@ import {
 import { ResellerForm } from '@/components/reseller/reseller-form';
 import { ResellerBenefits } from '@/components/reseller/reseller-benefits';
 import { CONTACT } from '@/lib/constants';
+import { O_PATTERN_DARK } from '@/lib/brand-pattern';
 
 export const metadata: Metadata = {
   title: 'Seja Revendedor — Original Filter',
@@ -220,14 +222,7 @@ export default function SejaRevendedorPage() {
 
       {/* ═══ 2. KPIS ═══ */}
       <section className="bg-brand-black relative overflow-hidden text-white">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage:
-              'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
-        />
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={O_PATTERN_DARK} />
 
         <div className="relative mx-auto max-w-7xl px-4 py-10 md:px-12 md:py-12">
           <div className="grid grid-cols-2 gap-px bg-white/5 md:grid-cols-4">
@@ -496,14 +491,7 @@ export default function SejaRevendedorPage() {
 
       {/* ═══ 7. CTA FINAL ═══ */}
       <section className="bg-brand-black relative overflow-hidden py-16 text-white md:py-20">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.05]"
-          style={{
-            backgroundImage:
-              'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
-        />
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={O_PATTERN_DARK} />
 
         <div className="relative mx-auto max-w-7xl px-4 md:px-12">
           <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2">
