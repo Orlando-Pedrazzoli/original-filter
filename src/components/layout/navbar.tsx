@@ -154,6 +154,9 @@ export function Navbar() {
                 sizes="(min-width: 1024px) 208px, (min-width: 640px) 176px, 144px"
                 className="object-contain"
                 priority
+                // Logo servido como asset estático, fora do otimizador da Vercel:
+                // PNG de marca já otimizado + imune a limites de Image Optimization
+                unoptimized
               />
             </div>
             <div className="text-brand-yellow font-display hidden text-[9px] leading-tight font-semibold tracking-[0.18em] uppercase transition-colors group-hover:text-white sm:block">
